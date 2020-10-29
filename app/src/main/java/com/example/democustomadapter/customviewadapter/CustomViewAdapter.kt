@@ -1,4 +1,4 @@
-package com.example.democustomadapter
+package com.example.democustomadapter.customviewadapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,20 +7,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class CustomItemView(
-    private val layoutId: Int
-) {
-    fun getContainer(parent: ViewGroup): View = LayoutInflater.from(parent.context).inflate(layoutId, parent, false).also {
-        onViewCreated(it)
-    }
-
-    abstract fun onViewCreated(view: View)
-
-    abstract fun getInsertPosition(itemCount: Int): Int
-}
-
 @Suppress("UNCHECKED_CAST")
 abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: NormalItemCallback<T>) : ListAdapter<Any, RecyclerView.ViewHolder>(diffCallback) {
+
+    abstract fun onCreateNormalViewHolder(parent: ViewGroup, viewType: Int): VH
+
+    abstract fun onBindNormalViewHolder(holder: VH, position: Int)
 
     private val customViews: MutableList<CustomItemView> = mutableListOf()
 
@@ -53,10 +45,6 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: 
     override fun getItem(position: Int): T {
         return  currentList.filterNot { it is CustomItemView }[position] as T
     }
-
-    abstract fun onCreateNormalViewHolder(parent: ViewGroup, viewType: Int): VH
-
-    abstract fun onBindNormalViewHolder(holder: VH, position: Int)
 
     fun insertCustomView(customView: CustomItemView) {
         customViews.add(customView)
@@ -96,5 +84,15 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: 
         }
 
         abstract fun areNormalContentsTheSame(oldItem: T, newItem: T): Boolean
+    }
+
+    abstract class CustomItemView(
+        private val layoutId: Int
+    ) {
+        fun getContainer(parent: ViewGroup): View = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
+
+        abstract fun onViewCreated(view: View)
+
+        abstract fun getInsertPosition(itemCount: Int): Int
     }
 }

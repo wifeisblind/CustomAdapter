@@ -12,6 +12,10 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.democustomadapter.customviewadapter.CustomViewAdapter
+import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItemView
+import com.example.democustomadapter.customviewadapter.insertFooter
+import com.example.democustomadapter.customviewadapter.insertHeader
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_cutom_item.view.*
 import kotlinx.coroutines.delay
@@ -26,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
 
-        val footer = FooterViewHolder {
+        testAdapter.insertFooter(R.layout.layout_cutom_item) {
             btnTest.text = "Footer"
             btnTest.setOnClickListener {
                 Toast.makeText(this@MainActivity, "This is Footer", LENGTH_SHORT).show()
@@ -40,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val header = HeaderViewHolder {
+        testAdapter.insertHeader(R.layout.layout_cutom_item) {
             btnTest.text = "Header"
             btnTest.setOnClickListener {
                 Toast.makeText(this@MainActivity, "This is Header", LENGTH_SHORT).show()
@@ -48,9 +52,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         rv.adapter = testAdapter.apply {
-            insertCustomView(header)
             insertCustomView(middle)
-            insertCustomView(footer)
         }
 
         testAdapter.submitNormalList(List(15) { index -> TestData("This is Test: $index") })
@@ -61,28 +63,6 @@ class MainActivity : AppCompatActivity() {
             delay(3000)
             testAdapter.submitNormalList(List(15) { index -> TestData("This is Test: $index") })
         }
-    }
-
-    class HeaderViewHolder(
-        private val bind: View.() -> Unit
-    ) : CustomItemView(R.layout.layout_cutom_item) {
-
-        override fun onViewCreated(view: View) {
-            bind(view)
-        }
-
-        override fun getInsertPosition(itemCount: Int): Int = 0
-    }
-
-    class FooterViewHolder(
-        private val bind: View.() -> Unit
-    ) : CustomItemView(R.layout.layout_cutom_item) {
-
-        override fun onViewCreated(view: View) {
-            bind(view)
-        }
-
-        override fun getInsertPosition(itemCount: Int): Int = itemCount - 1
     }
 
     class MiddleViewHolder(
