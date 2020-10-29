@@ -1,5 +1,6 @@
 package com.example.democustomadapter.customviewadapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,11 +50,22 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: 
     }
 
     fun insertCustomView(customView: CustomItemView) {
-        customViews.add(customView)
+        val target = customViews.find { it.getInsertPosition(itemCount) == customView.getInsertPosition(itemCount) }
+        if (target == null) {
+            customViews.add(customView)
+        } else {
+            val index = customViews.indexOf(target)
+            customViews[index] = customView
+        }
+        submitList(processList(currentList))
     }
 
     fun submitNormalList(list: List<T>) {
-        val muList = list.toMutableList() as MutableList<Any>
+        submitList(processList(list as List<Any>))
+    }
+
+    private fun processList(list: List<Any>): List<Any> {
+        val muList = list.toMutableList()
         for (c in customViews) {
             val insertPos = c.getInsertPosition(list.size + customViews.size)
             if (insertPos > muList.size) {
@@ -63,7 +75,7 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: 
             }
         }
 
-        submitList(muList)
+        return muList
     }
 
     companion object {
@@ -76,13 +88,22 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: 
     abstract class NormalItemCallback<T> : DiffUtil.ItemCallback<Any>() {
 
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is CustomItemView || newItem is CustomItemView) true else areNormalItemsTheSame(oldItem as T, newItem as T)
+            return if (oldItem is CustomItemView || newItem is CustomItemView) {
+                oldItem === newItem
+            } else {
+                areNormalItemsTheSame(oldItem as T, newItem as T)
+            }
         }
 
         abstract fun areNormalItemsTheSame(oldItem: T, newItem: T): Boolean
 
+        @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is CustomItemView || newItem is CustomItemView) true else areNormalContentsTheSame(oldItem as T, newItem as T)
+            return if (oldItem is CustomItemView || newItem is CustomItemView) {
+                oldItem === newItem
+            } else {
+                areNormalContentsTheSame(oldItem as T, newItem as T)
+            }
         }
 
         abstract fun areNormalContentsTheSame(oldItem: T, newItem: T): Boolean

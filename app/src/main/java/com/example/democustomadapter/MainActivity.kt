@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import androidx.lifecycle.lifecycleScope
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter
@@ -18,17 +20,22 @@ import com.example.democustomadapter.customviewadapter.insertFooter
 import com.example.democustomadapter.customviewadapter.insertHeader
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_cutom_item.view.*
-import kotlinx.coroutines.delay
+import kotlinx.android.synthetic.main.layout_footer.view.*
 
 class MainActivity : AppCompatActivity() {
 
     private val testAdapter: TestAdapter by lazy { TestAdapter() }
 
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        rv.layoutManager = LinearLayoutManager(this)
+        rv.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = testAdapter
+        }
 
         testAdapter.insertHeader(R.layout.layout_cutom_item) {
             btnTest.text = "Header"
@@ -37,29 +44,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        MiddleViewHolder {
-            btnTest.text = "Middle"
-            btnTest.setOnClickListener {
-                Toast.makeText(this@MainActivity, "This is Middle", LENGTH_SHORT).show()
-            }
-        }.also { testAdapter.insertCustomView(it) }
-
-        testAdapter.insertFooter(R.layout.layout_cutom_item) {
-            btnTest.text = "Footer"
-            btnTest.setOnClickListener {
-                Toast.makeText(this@MainActivity, "This is Footer", LENGTH_SHORT).show()
+        viewModel.getHasMore().observe(this) { hasMore ->
+            testAdapter.insertFooter(R.layout.layout_footer) {
+                if (hasMore) {
+                    layMore.visibility = VISIBLE
+                    layEnd.visibility = INVISIBLE
+                } else {
+                    layMore.visibility = INVISIBLE
+                    layEnd.visibility = VISIBLE
+                }
             }
         }
 
-        rv.adapter = testAdapter
-
-        testAdapter.submitNormalList(List(15) { index -> TestData("This is Test: $index") })
-
-        lifecycleScope.launchWhenResumed {
-            delay(3000)
-            testAdapter.submitNormalList(List(9) { index -> TestData("This is Test: $index") })
-            delay(3000)
-            testAdapter.submitNormalList(List(15) { index -> TestData("This is Test: $index") })
+        viewModel.getTestList().observe(this) {
+            testAdapter.submitNormalList(it)
         }
     }
 
@@ -84,8 +82,6 @@ class MainActivity : AppCompatActivity() {
             holder.itemView.setOnClickListener { Toast.makeText(holder.context, "position: $position", LENGTH_SHORT).show() }
         }
     }
-
-    data class TestData(val data: String)
 
     class TestViewHolder(
         parent: ViewGroup
