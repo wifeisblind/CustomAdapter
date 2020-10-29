@@ -39,6 +39,8 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: 
             val offset = customViews.map { it.getInsertPosition(itemCount) }.filter { it < position }.size
 
             onBindNormalViewHolder(holder as VH, position - offset)
+        } else {
+            customViews[getItemViewType(position)].onViewCreated(holder.itemView)
         }
     }
 

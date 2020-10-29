@@ -9,6 +9,7 @@ class Footer(
     @LayoutRes private val layoutRes: Int,
     private val onBindView: View.() -> Unit
 ) : CustomViewAdapter.CustomItemView(layoutRes) {
+
     override fun onViewCreated(view: View) {
         onBindView(view)
     }
@@ -20,6 +21,7 @@ class Header(
     @LayoutRes private val layoutRes: Int,
     private val onBindView: View.() -> Unit
 ) : CustomViewAdapter.CustomItemView(layoutRes) {
+
     override fun onViewCreated(view: View) {
         onBindView(view)
     }
@@ -28,14 +30,14 @@ class Header(
 }
 
 
-fun <T> CustomViewAdapter<T, out RecyclerView.ViewHolder>.insertFooter(
+fun CustomViewAdapter<*, out RecyclerView.ViewHolder>.insertFooter(
     @LayoutRes layoutRes: Int,
     onBindView: View.() -> Unit
 ) {
     insertCustomView(Footer(layoutRes, onBindView))
 }
 
-fun <T> CustomViewAdapter<T, out RecyclerView.ViewHolder>.insertHeader(
+fun CustomViewAdapter<*, out RecyclerView.ViewHolder>.insertHeader(
     @LayoutRes layoutRes: Int,
     onBindView: View.() -> Unit
 ) {

@@ -30,20 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         rv.layoutManager = LinearLayoutManager(this)
 
-        testAdapter.insertFooter(R.layout.layout_cutom_item) {
-            btnTest.text = "Footer"
-            btnTest.setOnClickListener {
-                Toast.makeText(this@MainActivity, "This is Footer", LENGTH_SHORT).show()
-            }
-        }
-
-        val middle = MiddleViewHolder {
-            btnTest.text = "Middle"
-            btnTest.setOnClickListener {
-                Toast.makeText(this@MainActivity, "This is Middle", LENGTH_SHORT).show()
-            }
-        }
-
         testAdapter.insertHeader(R.layout.layout_cutom_item) {
             btnTest.text = "Header"
             btnTest.setOnClickListener {
@@ -51,9 +37,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        rv.adapter = testAdapter.apply {
-            insertCustomView(middle)
+        MiddleViewHolder {
+            btnTest.text = "Middle"
+            btnTest.setOnClickListener {
+                Toast.makeText(this@MainActivity, "This is Middle", LENGTH_SHORT).show()
+            }
+        }.also { testAdapter.insertCustomView(it) }
+
+        testAdapter.insertFooter(R.layout.layout_cutom_item) {
+            btnTest.text = "Footer"
+            btnTest.setOnClickListener {
+                Toast.makeText(this@MainActivity, "This is Footer", LENGTH_SHORT).show()
+            }
         }
+
+        rv.adapter = testAdapter
 
         testAdapter.submitNormalList(List(15) { index -> TestData("This is Test: $index") })
 
