@@ -40,19 +40,17 @@ class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDel
 
     fun insertCustomItem(customItem: CustomItem) {
         customItems.add(customItem)
-        adapter.currentList.add(customItem)
-        adapter.submitList(adapter.currentList)
+        val muList = adapter.currentList.toMutableList().apply {
+            add(customItem)
+        }
+        adapter.submitList(muList)
     }
 
     fun submitNormalList(list: List<T>) {
         val muList = list.toMutableList() as MutableList<Any>
         for (c in customItems) {
             val insertPos = c.getInsertPosition(list.size + customItems.size)
-//            if (insertPos > muList.size) {
-//                muList.add(muList.size, c)
-//            } else {
             muList.add(insertPos, c)
-//            }
         }
         adapter.submitList(muList)
     }

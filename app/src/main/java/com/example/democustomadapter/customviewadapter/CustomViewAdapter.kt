@@ -19,7 +19,7 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
     abstract fun onBindNormalViewHolder(holder: VH, position: Int)
 
     private val delegate: CustomViewAdapterHelperDelegate = object : CustomViewAdapterHelperDelegate {
-        override val currentList: MutableList<Any> get() = this@CustomViewAdapter.currentList
+        override val currentList: List<Any> get() = this@CustomViewAdapter.currentList
         override fun submitList(list: MutableList<Any>) {
             this@CustomViewAdapter.submitList(list)
         }
@@ -47,32 +47,11 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
         helper.onBindViewHolder(position) { normalPos ->
             onBindNormalViewHolder(holder as VH, normalPos)
         }
-//
-//        if ((holder is CustomViewHolder).not()) {
-//
-//            val offset = customViews.map { it.getInsertPosition(itemCount) }.filter { it < position }.size
-//
-//            onBindNormalViewHolder(holder as VH, position - offset)
-//        } else {
-//            customViews[getItemViewType(position)].onViewCreated(holder.itemView)
-//        }
     }
 
     override fun getItem(position: Int): T = helper.getNormalItem(position)
-//        return  currentList.filterNot { it is CustomItemView }[position] as T
 
-    fun insertCustomView(customView: CustomItemView) {
-//        val target = customViews.find { it.getInsertPosition(itemCount) == customView.getInsertPosition(itemCount) }
-//        if (target == null) {
-//            customViews.add(customView)
-//        } else {
-//            val index = customViews.indexOf(target)
-//            customViews[index] = customView
-//        }
-//        submitList(processList(currentList))
-
-        helper.insertCustomItem(customView)
-    }
+    fun insertCustomView(customView: CustomItemView) = helper.insertCustomItem(customView)
 
     fun submitNormalList(list: List<T>) {
         helper.submitNormalList(list)
