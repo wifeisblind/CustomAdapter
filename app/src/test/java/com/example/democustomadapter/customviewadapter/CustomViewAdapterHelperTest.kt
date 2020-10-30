@@ -117,6 +117,23 @@ class CustomViewAdapterHelperTest {
         }
     }
 
+    /**
+     * Give: Current data is { Header, 1, 2, 3, Footer }
+     * When: Submit empty data
+     * Then: Sequence is { Header, Footer }
+     */
+    @Test
+    fun testSubmitEmptyData() {
+        givenCurrentList(Header(), 1, 2, 3, Footer())
+
+        SUT.submitNormalList(emptyList())
+
+        verifyOrder {
+            mockAdapter.spyOnCustomViewCreated(HEADER_LAYOUT_ID)
+            mockAdapter.spyOnCustomViewCreated(FOOTER_LAYOUT_ID)
+        }
+    }
+
     companion object {
         private const val FOOTER_LAYOUT_ID = 123
         private const val HEADER_LAYOUT_ID = 789
