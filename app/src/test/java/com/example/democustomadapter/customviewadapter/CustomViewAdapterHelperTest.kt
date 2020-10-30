@@ -111,8 +111,8 @@ class CustomViewAdapterHelperTest {
         verifyOrder {
             mockAdapter.spyOnCustomViewCreated(HEADER_LAYOUT_ID)
             mockAdapter.spyOnBindNormalViewHolder(0, "a")
-            mockAdapter.spyOnBindNormalViewHolder(1,"b")
-            mockAdapter.spyOnBindNormalViewHolder(2,"c")
+            mockAdapter.spyOnBindNormalViewHolder(1, "b")
+            mockAdapter.spyOnBindNormalViewHolder(2, "c")
             mockAdapter.spyOnCustomViewCreated(FOOTER_LAYOUT_ID)
         }
     }
@@ -134,9 +134,29 @@ class CustomViewAdapterHelperTest {
         }
     }
 
+    /**
+     * Give: Current data is { "a", "b", "c", Footer }
+     * When: Insert new FooterX
+     * Then: Sequence is { "a", "b", "c", FooterX }
+     */
+    @Test
+    fun testReplaceFooter() {
+        givenCurrentList("a", "b", "c", Footer())
+
+        SUT.insertCustomItem(FooterX())
+
+        verifyOrder {
+            mockAdapter.spyOnBindNormalViewHolder(0, "a")
+            mockAdapter.spyOnBindNormalViewHolder(1, "b")
+            mockAdapter.spyOnBindNormalViewHolder(2, "c")
+            mockAdapter.spyOnCustomViewCreated(FOOTER_X_LAYOUT_ID)
+        }
+    }
+
     companion object {
         private const val FOOTER_LAYOUT_ID = 123
         private const val HEADER_LAYOUT_ID = 789
+        private const val FOOTER_X_LAYOUT_ID = 996
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -184,6 +204,12 @@ class CustomViewAdapterHelperTest {
 
     class Footer : CustomItem {
         override val layoutId: Int get() = FOOTER_LAYOUT_ID
+
+        override fun getInsertPosition(itemCount: Int): Int = itemCount - 1
+    }
+
+    class FooterX : CustomItem {
+        override val layoutId: Int get() = FOOTER_X_LAYOUT_ID
 
         override fun getInsertPosition(itemCount: Int): Int = itemCount - 1
     }

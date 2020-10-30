@@ -10,6 +10,8 @@ class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDel
 
     private val customItems: MutableList<CustomItem> = mutableListOf()
 
+    private val itemCount: Int get() = adapter.currentList.size
+
     fun getItemViewType(position: Int): Int {
         val item = adapter.currentList[position]
         return if (item is CustomItem) {
@@ -39,9 +41,15 @@ class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDel
     }
 
     fun insertCustomItem(customItem: CustomItem) {
-        customItems.add(customItem)
-        val muList = adapter.currentList.toMutableList().apply {
-            add(customItem)
+        val muList = adapter.currentList.toMutableList()
+        val existedItem = customItems.find { it.getInsertPosition(itemCount) == customItem.getInsertPosition(itemCount) }
+        if (existedItem == null) {
+            customItems.add(customItem)
+            muList.add(customItem)
+        } else {
+            val index = customItems.indexOf(existedItem)
+            customItems[index] = customItem
+            muList[customItem.getInsertPosition(itemCount)] = customItem
         }
         adapter.submitList(muList)
     }
