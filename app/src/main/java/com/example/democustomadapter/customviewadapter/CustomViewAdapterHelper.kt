@@ -29,12 +29,13 @@ class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDel
 
     fun onBindViewHolder(position: Int, bindNormalViewHolder: (normalPos: Int) -> Unit) {
         if (adapter.currentList[position] !is CustomItem) {
-            bindNormalViewHolder(position)
+            val offset = customItems.map { it.getInsertPosition(adapter.currentList.size) }.filter { it < position }.size
+            bindNormalViewHolder(position - offset)
         }
     }
 
     fun getNormalItem(normalPos: Int): T {
-        return adapter.currentList[normalPos] as T
+        return adapter.currentList.filter { it !is CustomItem }[normalPos] as T
     }
 
     fun insertCustomItem(customItem: CustomItem) {
