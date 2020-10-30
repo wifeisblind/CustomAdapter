@@ -8,6 +8,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.SpyK
 import io.mockk.spyk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import org.junit.Before
 
 import org.junit.Test
@@ -32,7 +33,7 @@ class CustomViewAdapterHelperTest {
      *  Then: Footer is created
      */
     @Test
-    fun givenAFooter_whenInsertAFooter_thenFooterIsCreated() {
+    fun testInsertCustomItem() {
         val footer = Footer()
 
         SUT.insertCustomItem(footer)
@@ -42,8 +43,74 @@ class CustomViewAdapterHelperTest {
         }
     }
 
+    /**
+     * Given: 3 Data { 1, 2, 3}
+     * When: Submit normal data
+     * Then: onBindNormalViewHolder in correct sequence
+     */
+    @Test
+    fun testSubmitNormalList() {
+        val data = listOf(1, 2, 3)
+
+        SUT.submitNormalList(data)
+
+        verifyOrder {
+            mockAdapter.spyOnBindNormalViewHolder(1)
+            mockAdapter.spyOnBindNormalViewHolder(2)
+            mockAdapter.spyOnBindNormalViewHolder(3)
+        }
+    }
+
+    /**
+     * Given: Current data is { Footer }
+     * When: Submit normal data { 1, 2, 3, Footer }
+     * Then: footer is in bottom
+     */
+    @Test
+    fun testFooterIsInBottom() {
+        givenCurrentList(Footer())
+
+        SUT.submitNormalList(listOf(1, 2, 3))
+
+        verifyOrder {
+
+            // submitNormalList
+            mockAdapter.spyOnBindNormalViewHolder(1)
+            mockAdapter.spyOnBindNormalViewHolder(2)
+            mockAdapter.spyOnBindNormalViewHolder(3)
+            mockAdapter.spyOnCustomViewCreated(FOOTER_LAYOUT_ID)
+        }
+    }
+
+    /**
+     * Given: Current data is { 1, 2, 3, Footer }
+     * When: Submit normal data { 1 }
+     * Then: Sequence is { 1, FOOTER_LAYOUT_ID}
+     */
+    @Test
+    fun testShrinkList() {
+        givenCurrentList(1, 2, 3, Footer())
+
+        SUT.submitNormalList(listOf(1))
+
+        verifyOrder {
+            mockAdapter.spyOnBindNormalViewHolder(1)
+            mockAdapter.spyOnCustomViewCreated(FOOTER_LAYOUT_ID)
+        }
+    }
+
     companion object {
         private const val FOOTER_LAYOUT_ID = 123
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun givenCurrentList(vararg currentList: Any) {
+        mockAdapter.data = mutableListOf(*currentList)
+        val customItems = SUT.javaClass.getDeclaredField("customItems").let { field ->
+            field.isAccessible = true
+            field.get(SUT) as MutableList<Any>
+        }
+        customItems.addAll(mutableListOf(*currentList).filterIsInstance<CustomItem>())
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -62,7 +129,7 @@ class CustomViewAdapterHelperTest {
                 when(val type = helper.createViewHolder(itemType)) {
                     is NormalType -> {
                         helper.onBindViewHolder(i) { normalPos ->
-                            spyOnBindNormalViewHolder(normalPos, helper.getNormalItem(normalPos))
+                            spyOnBindNormalViewHolder(helper.getNormalItem(normalPos))
                         }
                     }
                     is CustomType -> spyOnCustomViewCreated(type.customItem.layoutId)
@@ -74,7 +141,7 @@ class CustomViewAdapterHelperTest {
 
         }
 
-        fun spyOnBindNormalViewHolder(normalPos: Int, data: Int) {
+        fun spyOnBindNormalViewHolder(data: Int) {
 
         }
     }

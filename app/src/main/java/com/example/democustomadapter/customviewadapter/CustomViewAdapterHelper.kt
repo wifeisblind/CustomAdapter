@@ -5,6 +5,7 @@ import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.V
 import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.NormalType
 
 
+@Suppress("UNCHECKED_CAST")
 class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDelegate) {
 
     private val customItems: MutableList<CustomItem> = mutableListOf()
@@ -26,15 +27,14 @@ class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDel
         }
     }
 
-    fun onBindViewHolder(
-        position: Int,
-        bindNormalViewHolder: (Int) -> Unit,
-    ) {
-
+    fun onBindViewHolder(position: Int, bindNormalViewHolder: (normalPos: Int) -> Unit) {
+        if (adapter.currentList[position] !is CustomItem) {
+            bindNormalViewHolder(position)
+        }
     }
 
     fun getNormalItem(normalPos: Int): T {
-        TODO("Not yet implemented")
+        return adapter.currentList[normalPos] as T
     }
 
     fun insertCustomItem(customItem: CustomItem) {
@@ -44,6 +44,16 @@ class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDel
     }
 
     fun submitNormalList(list: List<T>) {
+        val muList = list.toMutableList() as MutableList<Any>
+        for (c in customItems) {
+            val insertPos = c.getInsertPosition(list.size + customItems.size)
+//            if (insertPos > muList.size) {
+//                muList.add(muList.size, c)
+//            } else {
+            muList.add(insertPos, c)
+//            }
+        }
+        adapter.submitList(muList)
     }
 
     sealed class ViewHolderType {

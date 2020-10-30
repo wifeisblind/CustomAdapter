@@ -86,20 +86,6 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
         helper.submitNormalList(list)
     }
 
-//    private fun processList(list: List<Any>): List<Any> {
-//        val muList = list.toMutableList()
-//        for (c in customViews) {
-//            val insertPos = c.getInsertPosition(list.size + customViews.size)
-//            if (insertPos > muList.size) {
-//                muList.add(muList.size, c)
-//            } else {
-//                muList.add(c.getInsertPosition(list.size + customViews.size), c)
-//            }
-//        }
-//
-//        return muList
-//    }
-
     private class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     @Suppress("UNCHECKED_CAST")
