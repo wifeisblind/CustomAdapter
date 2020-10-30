@@ -7,80 +7,98 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.*
 
 @Suppress("UNCHECKED_CAST")
-abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: NormalItemCallback<T>) : ListAdapter<Any, RecyclerView.ViewHolder>(diffCallback) {
+abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
+    diffCallback: NormalItemCallback<T>
+) : ListAdapter<Any, RecyclerView.ViewHolder>(diffCallback) {
 
     abstract fun onCreateNormalViewHolder(parent: ViewGroup, viewType: Int): VH
 
     abstract fun onBindNormalViewHolder(holder: VH, position: Int)
 
-    private val customViews: MutableList<CustomItemView> = mutableListOf()
-
-    override fun getItemViewType(position: Int): Int {
-        return if (currentList[position] is CustomItemView) {
-            customViews.indexOf(currentList[position])
-        } else {
-            NORMAL_ITEM
+    private val delegate: CustomViewAdapterHelperDelegate = object : CustomViewAdapterHelperDelegate {
+        override val currentList: MutableList<Any> get() = this@CustomViewAdapter.currentList
+        override fun submitList(list: MutableList<Any>) {
+            this@CustomViewAdapter.submitList(list)
         }
     }
 
+    private val helper: CustomViewAdapterHelper<T> = CustomViewAdapterHelper(delegate)
+
+    override fun getItemViewType(position: Int): Int {
+        return helper.getItemViewType(position)
+//        return if (currentList[position] is CustomItemView) {
+//            customViews.indexOf(currentList[position])
+//        } else {
+//            NORMAL_ITEM
+//        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == NORMAL_ITEM) {
-            onCreateNormalViewHolder(parent, viewType)
-        } else {
-            CustomViewHolder(customViews[viewType].getContainer(parent))
+        return when(val type = helper.createViewHolder(viewType)) {
+            is NormalType -> onCreateNormalViewHolder(parent, viewType)
+            is CustomType -> createCustomViewHolder(parent, type)
+        }
+    }
+
+    private fun createCustomViewHolder(parent: ViewGroup, type: CustomType): CustomViewHolder {
+        return LayoutInflater.from(parent.context).inflate(type.customItem.layoutId, parent, false).let {
+            (type.customItem as CustomItemView).onViewCreated(it)
+            CustomViewHolder(it)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-        if ((holder is CustomViewHolder).not()) {
-
-            val offset = customViews.map { it.getInsertPosition(itemCount) }.filter { it < position }.size
-
-            onBindNormalViewHolder(holder as VH, position - offset)
-        } else {
-            customViews[getItemViewType(position)].onViewCreated(holder.itemView)
+        helper.onBindViewHolder(position) { normalPos ->
+            onBindNormalViewHolder(holder as VH, normalPos)
         }
+//
+//        if ((holder is CustomViewHolder).not()) {
+//
+//            val offset = customViews.map { it.getInsertPosition(itemCount) }.filter { it < position }.size
+//
+//            onBindNormalViewHolder(holder as VH, position - offset)
+//        } else {
+//            customViews[getItemViewType(position)].onViewCreated(holder.itemView)
+//        }
     }
 
-    override fun getItem(position: Int): T {
-        return  currentList.filterNot { it is CustomItemView }[position] as T
-    }
+    override fun getItem(position: Int): T = helper.getNormalItem(position)
+//        return  currentList.filterNot { it is CustomItemView }[position] as T
 
     fun insertCustomView(customView: CustomItemView) {
-        val target = customViews.find { it.getInsertPosition(itemCount) == customView.getInsertPosition(itemCount) }
-        if (target == null) {
-            customViews.add(customView)
-        } else {
-            val index = customViews.indexOf(target)
-            customViews[index] = customView
-        }
-        submitList(processList(currentList))
+//        val target = customViews.find { it.getInsertPosition(itemCount) == customView.getInsertPosition(itemCount) }
+//        if (target == null) {
+//            customViews.add(customView)
+//        } else {
+//            val index = customViews.indexOf(target)
+//            customViews[index] = customView
+//        }
+//        submitList(processList(currentList))
+
+        helper.insertCustomItem(customView)
     }
 
     fun submitNormalList(list: List<T>) {
-        submitList(processList(list as List<Any>))
+        helper.submitNormalList(list)
     }
 
-    private fun processList(list: List<Any>): List<Any> {
-        val muList = list.toMutableList()
-        for (c in customViews) {
-            val insertPos = c.getInsertPosition(list.size + customViews.size)
-            if (insertPos > muList.size) {
-                muList.add(muList.size, c)
-            } else {
-                muList.add(c.getInsertPosition(list.size + customViews.size), c)
-            }
-        }
-
-        return muList
-    }
-
-    companion object {
-        private const val NORMAL_ITEM = -1
-    }
+//    private fun processList(list: List<Any>): List<Any> {
+//        val muList = list.toMutableList()
+//        for (c in customViews) {
+//            val insertPos = c.getInsertPosition(list.size + customViews.size)
+//            if (insertPos > muList.size) {
+//                muList.add(muList.size, c)
+//            } else {
+//                muList.add(c.getInsertPosition(list.size + customViews.size), c)
+//            }
+//        }
+//
+//        return muList
+//    }
 
     private class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -109,13 +127,13 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(diffCallback: 
         abstract fun areNormalContentsTheSame(oldItem: T, newItem: T): Boolean
     }
 
-    abstract class CustomItemView(
-        private val layoutId: Int
-    ) {
-        fun getContainer(parent: ViewGroup): View = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
+    interface CustomItem {
+        val layoutId: Int
+        fun getInsertPosition(itemCount: Int): Int
+    }
+
+    abstract class CustomItemView(override val layoutId: Int) : CustomItem {
 
         abstract fun onViewCreated(view: View)
-
-        abstract fun getInsertPosition(itemCount: Int): Int
     }
 }
