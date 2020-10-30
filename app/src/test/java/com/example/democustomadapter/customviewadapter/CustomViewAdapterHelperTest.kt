@@ -15,9 +15,9 @@ import org.junit.Test
 
 class CustomViewAdapterHelperTest {
 
-    lateinit var SUT: CustomViewAdapterHelper<Int>
+    lateinit var SUT: CustomViewAdapterHelper<String>
 
-    lateinit var mockAdapter: MockAdapter
+    lateinit var mockAdapter: MockAdapter<String>
 
     @Before
     fun setUp() {
@@ -44,87 +44,87 @@ class CustomViewAdapterHelperTest {
     }
 
     /**
-     * Given: 3 Data { 1, 2, 3}
+     * Given: 3 Data { "a", "b", "c" }
      * When: Submit normal data
      * Then: onBindNormalViewHolder in correct sequence
      */
     @Test
     fun testSubmitNormalList() {
-        val data = listOf(1, 2, 3)
+        val data = listOf( "a", "b", "c")
 
         SUT.submitNormalList(data)
 
         verifyOrder {
-            mockAdapter.spyOnBindNormalViewHolder(1)
-            mockAdapter.spyOnBindNormalViewHolder(2)
-            mockAdapter.spyOnBindNormalViewHolder(3)
+            mockAdapter.spyOnBindNormalViewHolder(0, "a")
+            mockAdapter.spyOnBindNormalViewHolder(1, "b")
+            mockAdapter.spyOnBindNormalViewHolder(2, "c")
         }
     }
 
     /**
      * Given: Current data is { Footer }
-     * When: Submit normal data { 1, 2, 3, Footer }
+     * When: Submit normal data { "a", "b", "c", Footer }
      * Then: footer is in bottom
      */
     @Test
     fun testFooterIsInBottom() {
         givenCurrentList(Footer())
 
-        SUT.submitNormalList(listOf(1, 2, 3))
+        SUT.submitNormalList(listOf("a", "b", "c"))
 
         verifyOrder {
-            mockAdapter.spyOnBindNormalViewHolder(1)
-            mockAdapter.spyOnBindNormalViewHolder(2)
-            mockAdapter.spyOnBindNormalViewHolder(3)
+            mockAdapter.spyOnBindNormalViewHolder(0, "a")
+            mockAdapter.spyOnBindNormalViewHolder(1, "b")
+            mockAdapter.spyOnBindNormalViewHolder(2, "c")
             mockAdapter.spyOnCustomViewCreated(FOOTER_LAYOUT_ID)
         }
     }
 
     /**
-     * Given: Current data is { 1, 2, 3, Footer }
-     * When: Submit normal data { 1 }
-     * Then: Sequence is { 1, Footer }
+     * Given: Current data is { "a", "b", "c", Footer }
+     * When: Submit normal data { "a" }
+     * Then: Sequence is { "a", Footer }
      */
     @Test
     fun testShrinkList() {
-        givenCurrentList(1, 2, 3, Footer())
+        givenCurrentList("a", "b", "c", Footer())
 
-        SUT.submitNormalList(listOf(1))
+        SUT.submitNormalList(listOf("a"))
 
         verifyOrder {
-            mockAdapter.spyOnBindNormalViewHolder(1)
+            mockAdapter.spyOnBindNormalViewHolder(0, "a")
             mockAdapter.spyOnCustomViewCreated(FOOTER_LAYOUT_ID)
         }
     }
 
     /**
      * Give: Current data is { Header, Footer }
-     * When: Submit normal data { 1, 2, 3 }
-     * Then: Sequence is { Header, 1, 2, 3, Footer }
+     * When: Submit normal data { "a", "b", "c" }
+     * Then: Sequence is { Header, "a", "b", "c", Footer }
      */
     @Test
     fun testHeaderAndFooter() {
         givenCurrentList(Header(), Footer())
 
-        SUT.submitNormalList(listOf(1, 2, 3))
+        SUT.submitNormalList(listOf("a", "b", "c"))
 
         verifyOrder {
             mockAdapter.spyOnCustomViewCreated(HEADER_LAYOUT_ID)
-            mockAdapter.spyOnBindNormalViewHolder(1)
-            mockAdapter.spyOnBindNormalViewHolder(2)
-            mockAdapter.spyOnBindNormalViewHolder(3)
+            mockAdapter.spyOnBindNormalViewHolder(0, "a")
+            mockAdapter.spyOnBindNormalViewHolder(1,"b")
+            mockAdapter.spyOnBindNormalViewHolder(2,"c")
             mockAdapter.spyOnCustomViewCreated(FOOTER_LAYOUT_ID)
         }
     }
 
     /**
-     * Give: Current data is { Header, 1, 2, 3, Footer }
+     * Give: Current data is { Header, "a", "b", "c", Footer }
      * When: Submit empty data
      * Then: Sequence is { Header, Footer }
      */
     @Test
     fun testSubmitEmptyData() {
-        givenCurrentList(Header(), 1, 2, 3, Footer())
+        givenCurrentList(Header(), "a", "b", "c", Footer())
 
         SUT.submitNormalList(emptyList())
 
@@ -150,9 +150,9 @@ class CustomViewAdapterHelperTest {
     }
 
     @Suppress("UNCHECKED_CAST")
-    class MockAdapter : CustomViewAdapterHelperDelegate {
+    class MockAdapter<T> : CustomViewAdapterHelperDelegate {
 
-        lateinit var helper: CustomViewAdapterHelper<Int>
+        lateinit var helper: CustomViewAdapterHelper<T>
 
         var data: MutableList<Any> = mutableListOf()
 
@@ -165,7 +165,7 @@ class CustomViewAdapterHelperTest {
                 when(val type = helper.createViewHolder(itemType)) {
                     is NormalType -> {
                         helper.onBindViewHolder(i) { normalPos ->
-                            spyOnBindNormalViewHolder(helper.getNormalItem(normalPos))
+                            spyOnBindNormalViewHolder(normalPos, helper.getNormalItem(normalPos))
                         }
                     }
                     is CustomType -> spyOnCustomViewCreated(type.customItem.layoutId)
@@ -177,7 +177,7 @@ class CustomViewAdapterHelperTest {
 
         }
 
-        fun spyOnBindNormalViewHolder(data: Int) {
+        fun spyOnBindNormalViewHolder(normalPos: Int, data: T) {
 
         }
     }

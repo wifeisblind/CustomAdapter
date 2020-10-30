@@ -27,14 +27,7 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
 
     private val helper: CustomViewAdapterHelper<T> = CustomViewAdapterHelper(delegate)
 
-    override fun getItemViewType(position: Int): Int {
-        return helper.getItemViewType(position)
-//        return if (currentList[position] is CustomItemView) {
-//            customViews.indexOf(currentList[position])
-//        } else {
-//            NORMAL_ITEM
-//        }
-    }
+    override fun getItemViewType(position: Int): Int = helper.getItemViewType(position)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(val type = helper.createViewHolder(viewType)) {
@@ -51,7 +44,6 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         helper.onBindViewHolder(position) { normalPos ->
             onBindNormalViewHolder(holder as VH, normalPos)
         }
