@@ -1,5 +1,6 @@
 package com.example.democustomadapter.customviewadapter
 
+import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.VIEW_TYPE_NORMAL
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItem
 import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.CustomType
 import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.NormalType
@@ -66,9 +67,5 @@ class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDel
     sealed class ViewHolderType {
         object NormalType : ViewHolderType()
         data class CustomType(val customItem: CustomItem) : ViewHolderType()
-    }
-
-    companion object {
-        private const val VIEW_TYPE_NORMAL = -1
     }
 }

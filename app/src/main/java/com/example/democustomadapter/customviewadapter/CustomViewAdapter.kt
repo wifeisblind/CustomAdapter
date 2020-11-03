@@ -93,4 +93,8 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
 
         abstract fun onViewCreated(view: View)
     }
+
+    companion object {
+        const val VIEW_TYPE_NORMAL = -1
+    }
 }

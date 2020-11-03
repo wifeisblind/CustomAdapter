@@ -63,8 +63,8 @@ class CustomViewAdapterHelperTest {
 
     /**
      * Given: Current data is { Footer }
-     * When: Submit normal data { "a", "b", "c", Footer }
-     * Then: footer is in bottom
+     * When: Submit normal data { "a", "b", "c" }
+     * Then: Sequence is { "a", "b", "c", Footer }
      */
     @Test
     fun testFooterIsInBottom() {

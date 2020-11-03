@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
+import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.VIEW_TYPE_NORMAL
 import com.example.democustomadapter.customviewadapter.insertFooter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_footer.view.*
@@ -21,7 +23,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         rv.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
+            layoutManager = GridLayoutManager(this@MainActivity, 2).apply {
+                spanSizeLookup = object : SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return when(testAdapter.getItemViewType(position)) {
+                            VIEW_TYPE_NORMAL -> 1
+                            else -> 2
+                        }
+                    }
+                }
+            }
             adapter = testAdapter
         }
 
