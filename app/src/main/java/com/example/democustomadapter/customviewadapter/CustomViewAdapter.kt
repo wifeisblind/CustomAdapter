@@ -82,6 +82,12 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
         }
 
         abstract fun areNormalContentsTheSame(oldItem: T, newItem: T): Boolean
+
+        override fun getChangePayload(oldItem: Any, newItem: Any): Any? {
+            return getNormalChangePayload(oldItem as T, newItem as T)
+        }
+
+        open fun getNormalChangePayload(oldItem: T, newItem: T): Any? = null
     }
 
     interface CustomItem {
