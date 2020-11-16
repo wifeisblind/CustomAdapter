@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val hasMore: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val hasMore: MutableLiveData<Boolean> = MutableLiveData(true)
 
     fun getHasMore(): LiveData<Boolean> = hasMore
 
@@ -19,15 +19,15 @@ class MainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            testList.value = List(10) { index -> TestData("This is Test: $index") }
+            testList.value = List(15) { index -> TestData("This is Test: $index") }
 
             delay(3000)
 
-            testList.value = List(15) { index -> TestData("This is Test: $index") }
+            testList.value = List(20) { index -> TestData("This is Test: $index") }
 
-//            delay(1000)
+//            delay(5)
 //
-//            hasMore.value = false
+            hasMore.value = false
 
 
 //            delay(3000)

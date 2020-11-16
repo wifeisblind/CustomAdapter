@@ -5,18 +5,24 @@ import android.os.Bundle
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.democustomadapter.ItemData.Footer
+import com.example.democustomadapter.ItemData.Normal
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.VIEW_TYPE_NORMAL
 import com.example.democustomadapter.customviewadapter.insertFooter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_footer.view.*
+import kotlinx.coroutines.delay
 
 class MainActivity : AppCompatActivity() {
 
-    private val testAdapter: TestAdapter by lazy { TestAdapter() }
+    private val testAdapter: TestAdapter = TestAdapter()
+
+    private val testAdapter2: TestAdapter2 = TestAdapter2()
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -26,15 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         rv.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = testAdapter
+            adapter = testAdapter2
         }
-
-//        testAdapter.insertHeader(R.layout.layout_cutom_item) {
-//            btnTest.text = "Header"
-//            btnTest.setOnClickListener {
-//                Toast.makeText(this@MainActivity, "This is Header", LENGTH_SHORT).show()
-//            }
-//        }
 
         viewModel.getHasMore().observe(this) { hasMore ->
             testAdapter.insertFooter(R.layout.layout_footer) {
@@ -50,6 +49,36 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.getTestList().observe(this) {
             testAdapter.submitNormalList(it)
+        }
+
+        lifecycleScope.launchWhenResumed {
+            List(10) { index ->
+                when(index) {
+                    9 -> Footer(true)
+                    else -> Normal("This is Test: $index")
+                }
+            }.let {
+                testAdapter2.submitList(it)
+            }
+
+            delay(3_000)
+
+            val a = List(15) { index ->
+                when(index) {
+                    14 -> Footer(true)
+                    else -> Normal("This is Test: $index")
+                }
+            }
+
+            val b = List(15) { index ->
+                when(index) {
+                    14 -> Footer(false)
+                    else -> Normal("This is Test: $index")
+                }
+            }
+
+            testAdapter2.submitList(a)
+            testAdapter2.submitList(b)
         }
     }
 }
