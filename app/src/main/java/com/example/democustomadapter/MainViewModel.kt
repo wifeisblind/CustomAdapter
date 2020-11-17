@@ -13,21 +13,27 @@ class MainViewModel : ViewModel() {
 
     fun getHasMore(): LiveData<Boolean> = hasMore
 
-    private val testList: MutableLiveData<List<TestData>> = MutableLiveData()
+    private val itemList: MutableLiveData<List<ItemData>> = MutableLiveData()
 
-    fun getTestList(): LiveData<List<TestData>> = testList
+    fun getTestList(): LiveData<List<ItemData>> = itemList
 
     init {
         viewModelScope.launch {
-            testList.value = List(15) { index -> TestData("This is Test: $index") }
+            itemList.value = List(15) { index -> ItemData.create(index) }
 
             delay(5000)
 
-            testList.value = List(20) { index -> TestData("This is Test: $index") }
+            itemList.value = List(20) { index -> ItemData.create(index) }
 
 
             hasMore.value = false
 
         }
+    }
+
+    fun addFavorite(index: Int) = itemList.value?.let { list ->
+        val muList = list.toMutableList()
+        muList[index] = list[index].copy(isFavorite = list[index].isFavorite.not())
+        itemList.value = muList
     }
 }

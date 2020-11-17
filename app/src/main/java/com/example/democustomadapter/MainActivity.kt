@@ -9,9 +9,9 @@ import com.example.democustomadapter.customviewadapter.insertFooter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_footer.view.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), DemoAdapter.OnAddFavoriteClickListener {
 
-    private val demoAdapter: DemoAdapter = DemoAdapter()
+    private val demoAdapter: DemoAdapter = DemoAdapter(this)
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -36,5 +36,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.getTestList().observe(this) {
             demoAdapter.submitList(it)
         }
+    }
+
+    override fun onAddFavorite(position: Int) {
+        viewModel.addFavorite(position)
     }
 }
