@@ -25,13 +25,9 @@ class MainViewModel : ViewModel() {
 
             testList.value = List(20) { index -> TestData("This is Test: $index") }
 
-//            delay(100)
 
             hasMore.value = false
 
-
-//            delay(3000)
-//            testList.value = List(20) { index -> TestData("This is Test: $index") }
         }
     }
 }

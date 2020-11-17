@@ -1,9 +1,6 @@
 package com.example.democustomadapter.customviewadapter
 
-import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.NO_TYPE
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItem
-import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.CustomType
-import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.NormalType
 
 
 @Suppress("UNCHECKED_CAST")
@@ -17,11 +14,7 @@ class CustomViewAdapterHelper<T>(
 
     fun getItemViewType(position: Int): Int {
         val item = currentList[position]
-        return if (item is CustomItem) {
-            item.layoutId
-        } else {
-            -1
-        }
+        return if (item is CustomItem) item.layoutId else NORMAL_TYPE
     }
 
     fun bindViewHolder(position: Int): Pair<Int, Any> {
@@ -60,8 +53,7 @@ class CustomViewAdapterHelper<T>(
         adapter.commitList(currentList.toMutableList())
     }
 
-    sealed class ViewHolderType {
-        object NormalType : ViewHolderType()
-        data class CustomType(val customItem: CustomItem) : ViewHolderType()
+    companion object {
+        const val NORMAL_TYPE = -1
     }
 }

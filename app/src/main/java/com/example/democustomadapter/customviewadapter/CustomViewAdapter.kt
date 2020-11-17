@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.Companion.NORMAL_TYPE
 
 @Suppress("UNCHECKED_CAST")
 class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
@@ -19,10 +20,12 @@ class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
 
     override fun getItemViewType(position: Int): Int {
         return when (val type = helper.getItemViewType(position)) {
-            -1 -> delegate.getItemViewType(position)
+            NORMAL_TYPE -> delegate.getItemViewType(position)
             else -> type.unaryMinus()
         }
     }
+
+    fun isCustomType(position: Int): Boolean = getItemViewType(position) < 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when {

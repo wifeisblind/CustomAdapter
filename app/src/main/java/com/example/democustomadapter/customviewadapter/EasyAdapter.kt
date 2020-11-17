@@ -3,6 +3,7 @@ package com.example.democustomadapter.customviewadapter
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.NO_TYPE
@@ -53,8 +54,19 @@ abstract class EasyAdapter <T, VH : RecyclerView.ViewHolder> {
 
     private val realAdapter: CustomViewAdapter<T, VH> = CustomViewAdapter(this)
 
-    val setting: RecyclerView.() -> Unit = {
+    open val setting: RecyclerView.() -> Unit = {
         layoutManager = LinearLayoutManager(context)
+        adapter = realAdapter
+    }
+
+    open val twoSpanSetting: RecyclerView.() -> Unit = {
+        layoutManager = GridLayoutManager(context, 2).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if ( realAdapter.isCustomType(position)) 1 else 2
+                }
+            }
+        }
         adapter = realAdapter
     }
 

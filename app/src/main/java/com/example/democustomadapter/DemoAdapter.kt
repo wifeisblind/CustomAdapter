@@ -7,11 +7,10 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.recyclerview.widget.RecyclerView
-import com.example.democustomadapter.TestAdapter.TestViewHolder
-import com.example.democustomadapter.customviewadapter.CustomViewAdapter
+import com.example.democustomadapter.DemoAdapter.TestViewHolder
 import com.example.democustomadapter.customviewadapter.EasyAdapter
 
-class TestAdapter : EasyAdapter<TestData, TestViewHolder>() {
+class DemoAdapter : EasyAdapter<TestData, TestViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
         return TestViewHolder(parent)
