@@ -30,14 +30,14 @@ class Header(
 }
 
 
-fun CustomViewAdapter<*, out RecyclerView.ViewHolder>.insertFooter(
+fun EasyAdapter<*, out RecyclerView.ViewHolder>.insertFooter(
     @LayoutRes layoutRes: Int,
     onBindView: View.() -> Unit = {}
 ) {
     insertCustomView(Footer(layoutRes, onBindView))
 }
 
-fun CustomViewAdapter<*, out RecyclerView.ViewHolder>.insertHeader(
+fun EasyAdapter<*, out RecyclerView.ViewHolder>.insertHeader(
     @LayoutRes layoutRes: Int,
     onBindView: View.() -> Unit = {}
 ) {

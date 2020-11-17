@@ -9,16 +9,25 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.recyclerview.widget.RecyclerView
 import com.example.democustomadapter.TestAdapter.TestViewHolder
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter
+import com.example.democustomadapter.customviewadapter.EasyAdapter
 
-class TestAdapter : CustomViewAdapter<TestData, TestViewHolder>(TestDiff()) {
+class TestAdapter : EasyAdapter<TestData, TestViewHolder>() {
 
-    override fun onCreateNormalViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
         return TestViewHolder(parent)
     }
 
-    override fun onBindNormalViewHolder(holder: TestViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TestViewHolder, position: Int) {
         holder.bind(getItem(position))
         holder.itemView.setOnClickListener { Toast.makeText(holder.context, "position: $position", LENGTH_SHORT).show() }
+    }
+
+    override fun areItemsTheSame(oldItem: TestData, newItem: TestData): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: TestData, newItem: TestData): Boolean {
+        return oldItem == newItem
     }
 
     class TestViewHolder(
@@ -32,16 +41,6 @@ class TestAdapter : CustomViewAdapter<TestData, TestViewHolder>(TestDiff()) {
 
         fun bind(data: TestData) {
             textView.text = data.data
-        }
-    }
-
-    class TestDiff : CustomViewAdapter.NormalItemCallback<TestData>() {
-        override fun areNormalItemsTheSame(oldItem: TestData, newItem: TestData): Boolean {
-            return oldItem == newItem
-        }
-
-        override fun areNormalContentsTheSame(oldItem: TestData, newItem: TestData): Boolean {
-            return oldItem == newItem
         }
     }
 }

@@ -11,13 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.*
 
 @Suppress("UNCHECKED_CAST")
-abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
-    diffCallback: NormalItemCallback<T>
-) : ListAdapter<Any, RecyclerView.ViewHolder>(diffCallback), CustomViewAdapterHelperDelegate {
-
-    abstract fun onCreateNormalViewHolder(parent: ViewGroup, viewType: Int): VH
-
-    abstract fun onBindNormalViewHolder(holder: VH, position: Int)
+class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
+    private val delegate: EasyAdapter<T, VH>
+) : ListAdapter<Any, RecyclerView.ViewHolder>(delegate.diffCallback), CustomViewAdapterHelperDelegate {
 
     override fun commitList(list: MutableList<Any>) {
         submitList(list)
@@ -29,7 +25,7 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(val type = helper.createViewHolder(viewType)) {
-            is NormalType -> onCreateNormalViewHolder(parent, viewType)
+            is NormalType -> delegate.onCreateViewHolder(parent, viewType)
             is CustomType -> createCustomViewHolder(parent, type)
         }
     }
@@ -43,11 +39,11 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         helper.onBindViewHolder(position) { normalPos ->
-            onBindNormalViewHolder(holder as VH, normalPos)
+            delegate.onBindViewHolder(holder as VH, normalPos)
         }
     }
 
-    override fun getItem(position: Int): T = helper.getNormalItem(position)
+    fun getNormalItem(position: Int): T = helper.getNormalItem(position)
 
     fun insertCustomView(customView: CustomItemView) = helper.insertCustomItem(customView)
 
@@ -56,37 +52,6 @@ abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
     }
 
     private class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
-    @Suppress("UNCHECKED_CAST")
-    abstract class NormalItemCallback<T> : DiffUtil.ItemCallback<Any>() {
-
-        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is CustomItemView || newItem is CustomItemView) {
-                oldItem === newItem
-            } else {
-                areNormalItemsTheSame(oldItem as T, newItem as T)
-            }
-        }
-
-        abstract fun areNormalItemsTheSame(oldItem: T, newItem: T): Boolean
-
-        @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is CustomItemView || newItem is CustomItemView) {
-                oldItem === newItem
-            } else {
-                areNormalContentsTheSame(oldItem as T, newItem as T)
-            }
-        }
-
-        abstract fun areNormalContentsTheSame(oldItem: T, newItem: T): Boolean
-
-        override fun getChangePayload(oldItem: Any, newItem: Any): Any? {
-            return getNormalChangePayload(oldItem as T, newItem as T)
-        }
-
-        open fun getNormalChangePayload(oldItem: T, newItem: T): Any? = null
-    }
 
     interface CustomItem {
         val layoutId: Int

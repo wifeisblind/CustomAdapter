@@ -14,6 +14,7 @@ import com.example.democustomadapter.ItemData.Footer
 import com.example.democustomadapter.ItemData.Normal
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.VIEW_TYPE_NORMAL
 import com.example.democustomadapter.customviewadapter.insertFooter
+import com.example.democustomadapter.customviewadapter.setting
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_footer.view.*
 import kotlinx.coroutines.delay
@@ -30,10 +31,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        rv.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = testAdapter
-        }
+        rv.apply(testAdapter.setting)
 
         viewModel.getHasMore().observe(this) { hasMore ->
             testAdapter.insertFooter(R.layout.layout_footer) {
@@ -48,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.getTestList().observe(this) {
-            testAdapter.submitNormalList(it)
+            testAdapter.submitList(it)
         }
 
         lifecycleScope.launchWhenResumed {
