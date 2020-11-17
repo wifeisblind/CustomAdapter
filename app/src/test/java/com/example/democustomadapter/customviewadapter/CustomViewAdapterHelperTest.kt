@@ -19,10 +19,16 @@ class CustomViewAdapterHelperTest {
 
     lateinit var mockAdapter: MockAdapter<String>
 
+    lateinit var initialList: MutableList<Any>
+
+    lateinit var customItem: MutableList<CustomItem>
+
     @Before
     fun setUp() {
         mockAdapter = spyk(MockAdapter())
-        SUT = CustomViewAdapterHelper(mockAdapter)
+        initialList = mutableListOf()
+        customItem = mutableListOf()
+        SUT = CustomViewAdapterHelper(mockAdapter, initialList, customItem)
         mockAdapter.helper = SUT
         MockKAnnotations.init(this)
     }
@@ -159,14 +165,13 @@ class CustomViewAdapterHelperTest {
         private const val FOOTER_X_LAYOUT_ID = 996
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun givenCurrentList(vararg currentList: Any) {
-        mockAdapter.data = mutableListOf(*currentList)
-        val customItems = SUT.javaClass.getDeclaredField("customItems").let { field ->
-            field.isAccessible = true
-            field.get(SUT) as MutableList<Any>
+        currentList.forEach {
+            if (it is CustomItem) {
+                customItem.add(it)
+            }
+            initialList.add(it)
         }
-        customItems.addAll(mutableListOf(*currentList).filterIsInstance<CustomItem>())
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -174,13 +179,9 @@ class CustomViewAdapterHelperTest {
 
         lateinit var helper: CustomViewAdapterHelper<T>
 
-        var data: MutableList<Any> = mutableListOf()
-
-        override val currentList: MutableList<Any> get() = data
-
-        override fun submitList(list: MutableList<Any>) {
-            data = list
-            for (i in (0 until data.size)) {
+        override fun commitList(list: MutableList<Any>) {
+            println(list)
+            for (i in (0 until list.size)) {
                 val itemType = helper.getItemViewType(i)
                 when(val type = helper.createViewHolder(itemType)) {
                     is NormalType -> {

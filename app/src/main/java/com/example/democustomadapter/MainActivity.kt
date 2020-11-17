@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         rv.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = testAdapter2
+            adapter = testAdapter
         }
 
         viewModel.getHasMore().observe(this) { hasMore ->

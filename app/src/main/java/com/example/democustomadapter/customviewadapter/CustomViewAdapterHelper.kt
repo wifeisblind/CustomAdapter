@@ -7,14 +7,16 @@ import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.V
 
 
 @Suppress("UNCHECKED_CAST")
-class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDelegate) {
+class CustomViewAdapterHelper<T>(
+        private val adapter: CustomViewAdapterHelperDelegate,
+        private val currentList: MutableList<Any> = mutableListOf(),
+        private val customItems: MutableList<CustomItem> = mutableListOf()
+) {
 
-    private val customItems: MutableList<CustomItem> = mutableListOf()
-
-    private val itemCount: Int get() = adapter.currentList.size
+    private val itemCount: Int get() = currentList.size
 
     fun getItemViewType(position: Int): Int {
-        val item = adapter.currentList[position]
+        val item = currentList[position]
         return if (item is CustomItem) {
             customItems.indexOf(item)
         } else {
@@ -31,37 +33,37 @@ class CustomViewAdapterHelper<T>(private val adapter: CustomViewAdapterHelperDel
     }
 
     fun onBindViewHolder(position: Int, bindNormalViewHolder: (normalPos: Int) -> Unit) {
-        if (adapter.currentList[position] !is CustomItem) {
-            val offset = customItems.map { it.getInsertPosition(adapter.currentList.size) }.filter { it < position }.size
+        if (currentList[position] !is CustomItem) {
+            val offset = customItems.map { it.getInsertPosition(currentList.size) }.filter { it < position }.size
             bindNormalViewHolder(position - offset)
         }
     }
 
     fun getNormalItem(normalPos: Int): T {
-        return adapter.currentList.filter { it !is CustomItem }[normalPos] as T
+        return currentList.filter { it !is CustomItem }[normalPos] as T
     }
 
     fun insertCustomItem(customItem: CustomItem) {
-        val muList = adapter.currentList.toMutableList()
         val existedItem = customItems.find { it.getInsertPosition(itemCount) == customItem.getInsertPosition(itemCount) }
         if (existedItem == null) {
             customItems.add(customItem)
-            muList.add(customItem)
+            currentList.add(customItem)
         } else {
             val index = customItems.indexOf(existedItem)
             customItems[index] = customItem
-            muList[customItem.getInsertPosition(itemCount)] = customItem
+            currentList[customItem.getInsertPosition(itemCount)] = customItem
         }
-        adapter.submitList(muList)
+        adapter.commitList(currentList.toMutableList())
     }
 
     fun submitNormalList(list: List<T>) {
-        val muList = list.toMutableList() as MutableList<Any>
+        currentList.clear()
+        currentList.addAll(list as List<Any>)
         for (c in customItems) {
             val insertPos = c.getInsertPosition(list.size + customItems.size)
-            muList.add(insertPos, c)
+            currentList.add(insertPos, c)
         }
-        adapter.submitList(muList)
+        adapter.commitList(currentList.toMutableList())
     }
 
     sealed class ViewHolderType {

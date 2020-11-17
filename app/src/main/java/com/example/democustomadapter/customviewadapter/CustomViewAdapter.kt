@@ -1,6 +1,7 @@
 package com.example.democustomadapter.customviewadapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,20 +13,17 @@ import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.V
 @Suppress("UNCHECKED_CAST")
 abstract class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
     diffCallback: NormalItemCallback<T>
-) : ListAdapter<Any, RecyclerView.ViewHolder>(diffCallback) {
+) : ListAdapter<Any, RecyclerView.ViewHolder>(diffCallback), CustomViewAdapterHelperDelegate {
 
     abstract fun onCreateNormalViewHolder(parent: ViewGroup, viewType: Int): VH
 
     abstract fun onBindNormalViewHolder(holder: VH, position: Int)
 
-    private val delegate: CustomViewAdapterHelperDelegate = object : CustomViewAdapterHelperDelegate {
-        override val currentList: List<Any> get() = this@CustomViewAdapter.currentList
-        override fun submitList(list: MutableList<Any>) {
-            this@CustomViewAdapter.submitList(list)
-        }
+    override fun commitList(list: MutableList<Any>) {
+        submitList(list)
     }
 
-    private val helper: CustomViewAdapterHelper<T> = CustomViewAdapterHelper(delegate)
+    private val helper: CustomViewAdapterHelper<T> = CustomViewAdapterHelper(this)
 
     override fun getItemViewType(position: Int): Int = helper.getItemViewType(position)
 

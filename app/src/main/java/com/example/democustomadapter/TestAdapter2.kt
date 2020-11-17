@@ -69,7 +69,7 @@ val diffUtil = object : DiffUtil.ItemCallback<ItemData>() {
         return if (oldItem is ItemData.Normal && newItem is ItemData.Normal) {
             oldItem.value == newItem.value
         } else {
-            true
+            false
         }
     }
 
