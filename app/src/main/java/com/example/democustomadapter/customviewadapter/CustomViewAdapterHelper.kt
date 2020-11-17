@@ -1,6 +1,6 @@
 package com.example.democustomadapter.customviewadapter
 
-import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.VIEW_TYPE_NORMAL
+import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.NO_TYPE
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItem
 import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.CustomType
 import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.NormalType
@@ -18,24 +18,18 @@ class CustomViewAdapterHelper<T>(
     fun getItemViewType(position: Int): Int {
         val item = currentList[position]
         return if (item is CustomItem) {
-            customItems.indexOf(item)
+            item.layoutId
         } else {
-            VIEW_TYPE_NORMAL
+            -1
         }
     }
 
-    fun createViewHolder(viewType: Int): ViewHolderType {
-        return if (viewType == VIEW_TYPE_NORMAL) {
-            NormalType
+    fun bindViewHolder(position: Int): Pair<Int, Any> {
+        return if (currentList[position] is CustomItem) {
+            (0 to currentList[position])
         } else {
-            CustomType(customItems[viewType])
-        }
-    }
-
-    fun onBindViewHolder(position: Int, bindNormalViewHolder: (normalPos: Int) -> Unit) {
-        if (currentList[position] !is CustomItem) {
             val offset = customItems.map { it.getInsertPosition(currentList.size) }.filter { it < position }.size
-            bindNormalViewHolder(position - offset)
+            ((position - offset) to currentList[position])
         }
     }
 

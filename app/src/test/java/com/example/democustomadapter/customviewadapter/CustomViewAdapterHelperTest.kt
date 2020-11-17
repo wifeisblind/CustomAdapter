@@ -1,11 +1,7 @@
 package com.example.democustomadapter.customviewadapter
 
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItem
-import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.CustomType
-import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.NormalType
 import io.mockk.MockKAnnotations
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.SpyK
 import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
@@ -182,14 +178,10 @@ class CustomViewAdapterHelperTest {
         override fun commitList(list: MutableList<Any>) {
             println(list)
             for (i in (0 until list.size)) {
-                val itemType = helper.getItemViewType(i)
-                when(val type = helper.createViewHolder(itemType)) {
-                    is NormalType -> {
-                        helper.onBindViewHolder(i) { normalPos ->
-                            spyOnBindNormalViewHolder(normalPos, helper.getNormalItem(normalPos))
-                        }
-                    }
-                    is CustomType -> spyOnCustomViewCreated(type.customItem.layoutId)
+                val (pos, data) = helper.bindViewHolder(i)
+                when(val itemType = helper.getItemViewType(i)) {
+                    -1 -> spyOnBindNormalViewHolder(pos, data as T)
+                    else -> spyOnCustomViewCreated(itemType)
                 }
             }
         }

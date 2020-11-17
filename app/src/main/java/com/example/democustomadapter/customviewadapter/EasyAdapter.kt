@@ -5,14 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.VIEW_TYPE_NORMAL
+import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.NO_TYPE
 import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItemView
 
 abstract class EasyAdapter <T, VH : RecyclerView.ViewHolder> {
 
     abstract fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
 
-    open fun getItemViewType(position: Int): Int = VIEW_TYPE_NORMAL
+    /**
+     * Negative value is reserved, please using value larger than 0
+     */
+    open fun getItemViewType(position: Int): Int = NO_TYPE
 
     abstract fun onBindViewHolder(holder: VH, position: Int)
 
@@ -48,7 +51,12 @@ abstract class EasyAdapter <T, VH : RecyclerView.ViewHolder> {
         }
     }
 
-    val realAdapter: CustomViewAdapter<T, VH> = CustomViewAdapter(this)
+    private val realAdapter: CustomViewAdapter<T, VH> = CustomViewAdapter(this)
+
+    val setting: RecyclerView.() -> Unit = {
+        layoutManager = LinearLayoutManager(context)
+        adapter = realAdapter
+    }
 
     protected fun getItem(position: Int): T = realAdapter.getNormalItem(position)
 
@@ -59,9 +67,4 @@ abstract class EasyAdapter <T, VH : RecyclerView.ViewHolder> {
     fun insertCustomView(customView: CustomItemView) {
         realAdapter.insertCustomView(customView)
     }
-}
-
-val EasyAdapter<*, *>.setting : RecyclerView.() -> Unit get() = {
-    layoutManager = LinearLayoutManager(context)
-    adapter = this@setting.realAdapter
 }

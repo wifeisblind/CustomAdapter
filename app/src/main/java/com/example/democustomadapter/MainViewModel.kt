@@ -19,11 +19,11 @@ class MainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            testList.value = List(1) { index -> TestData("This is Test: $index") }
+            testList.value = List(15) { index -> TestData("This is Test: $index") }
 
             delay(5000)
 
-            testList.value = List(2) { index -> TestData("This is Test: $index") }
+            testList.value = List(20) { index -> TestData("This is Test: $index") }
 
 //            delay(100)
 

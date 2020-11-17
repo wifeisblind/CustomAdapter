@@ -1,14 +1,10 @@
 package com.example.democustomadapter.customviewadapter
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.democustomadapter.customviewadapter.CustomViewAdapterHelper.ViewHolderType.*
 
 @Suppress("UNCHECKED_CAST")
 class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
@@ -21,25 +17,27 @@ class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
 
     private val helper: CustomViewAdapterHelper<T> = CustomViewAdapterHelper(this)
 
-    override fun getItemViewType(position: Int): Int = helper.getItemViewType(position)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when(val type = helper.createViewHolder(viewType)) {
-            is NormalType -> delegate.onCreateViewHolder(parent, viewType)
-            is CustomType -> createCustomViewHolder(parent, type)
+    override fun getItemViewType(position: Int): Int {
+        return when (val type = helper.getItemViewType(position)) {
+            -1 -> delegate.getItemViewType(position)
+            else -> type.unaryMinus()
         }
     }
 
-    private fun createCustomViewHolder(parent: ViewGroup, type: CustomType): CustomViewHolder {
-        return LayoutInflater.from(parent.context).inflate(type.customItem.layoutId, parent, false).let {
-            (type.customItem as CustomItemView).onViewCreated(it)
-            CustomViewHolder(it)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when {
+            viewType < 0 -> {
+                CustomViewHolder(LayoutInflater.from(parent.context).inflate(viewType.unaryMinus(), parent, false))
+            }
+            else -> delegate.onCreateViewHolder(parent, viewType)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        helper.onBindViewHolder(position) { normalPos ->
-            delegate.onBindViewHolder(holder as VH, normalPos)
+        val (normalPos, item) = helper.bindViewHolder(position)
+        when(holder) {
+            is CustomViewHolder -> (item as CustomItemView).onViewCreated(holder.itemView)
+            else -> delegate.onBindViewHolder(holder as VH, normalPos)
         }
     }
 
@@ -64,6 +62,6 @@ class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
     }
 
     companion object {
-        const val VIEW_TYPE_NORMAL = -1
+        const val NO_TYPE = 0
     }
 }
