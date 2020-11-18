@@ -35,7 +35,6 @@ class DemoAdapter(private val listener: DemoHolderClickListener) : EasyAdapterDe
 
     override fun onBindViewHolder(holder: DemoHolder, position: Int) {
         holder.bind(getItem(position))
-        holder.itemView.setOnClickListener { Toast.makeText(holder.context, "position: $position", LENGTH_SHORT).show() }
     }
 
     override fun areItemsTheSame(oldItem: ItemData, newItem: ItemData): Boolean {
@@ -61,9 +60,12 @@ class DemoAdapter(private val listener: DemoHolderClickListener) : EasyAdapterDe
         LayoutInflater.from(parent.context).inflate(R.layout.layout_item, parent, false)
     ) {
 
-        val context: Context = itemView.context
+        private val context: Context = itemView.context
 
-        fun bind(data: ItemData) = with(data) {
+        init {
+            itemView.setOnClickListener {
+                Toast.makeText(context, "position: $normalPosition", LENGTH_SHORT).show()
+            }
 
             imgFavorite.setOnClickListener {
                 listener.onAddFavorite(normalPosition)
@@ -72,6 +74,9 @@ class DemoAdapter(private val listener: DemoHolderClickListener) : EasyAdapterDe
             imgDelete.setOnClickListener {
                 listener.onDelete(normalPosition)
             }
+        }
+
+        fun bind(data: ItemData) = with(data) {
 
             tvTitle.text = title
             Glide.with(itemView.context)
