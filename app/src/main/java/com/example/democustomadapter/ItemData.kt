@@ -1,6 +1,7 @@
 package com.example.democustomadapter
 
 data class ItemData(
+        val id: Int,
         val imgCommodityUrl: String,
         val title: String,
         val price: String,
@@ -8,10 +9,11 @@ data class ItemData(
 ) {
     companion object {
         fun create(index: Int): ItemData = ItemData(
-            imgCommodityUrl = imgList[index.rem(imgList.size)],
-            title = "Commodity $index",
-            price = "${index*100}",
-            isFavorite = false
+                id = index,
+                imgCommodityUrl = imgList[index.rem(imgList.size)],
+                title = "Commodity $index",
+                price = "${index*100}",
+                isFavorite = false
         )
     }
 }

@@ -38,7 +38,7 @@ class DemoAdapter(private val listener: DemoHolderClickListener) : EasyAdapterDe
     }
 
     override fun areItemsTheSame(oldItem: ItemData, newItem: ItemData): Boolean {
-        return oldItem.title == newItem.title
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: ItemData, newItem: ItemData): Boolean {
