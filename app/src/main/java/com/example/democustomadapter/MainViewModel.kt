@@ -18,22 +18,20 @@ class MainViewModel : ViewModel() {
     fun getTestList(): LiveData<List<ItemData>> = itemList
 
     init {
-        viewModelScope.launch {
-            itemList.value = List(15) { index -> ItemData.create(index) }
-
-            delay(5000)
-
-            itemList.value = List(20) { index -> ItemData.create(index) }
-
-
-            hasMore.value = false
-
-        }
+        itemList.value = List(15) { index -> ItemData.create(index) }
     }
+
 
     fun addFavorite(index: Int) = itemList.value?.let { list ->
         val muList = list.toMutableList()
         muList[index] = list[index].copy(isFavorite = list[index].isFavorite.not())
         itemList.value = muList
+    }
+
+    fun loadMore() = viewModelScope.launch {
+        delay(1_000)
+
+        itemList.value = List(20) { index -> ItemData.create(index) }
+        hasMore.value = false
     }
 }
