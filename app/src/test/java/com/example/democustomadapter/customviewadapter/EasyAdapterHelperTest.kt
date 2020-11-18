@@ -120,6 +120,24 @@ class EasyAdapterHelperTest {
     }
 
     /**
+     * Give: Current data is { Header }
+     * When: Insert Footer
+     * Then: Sequence is { Header, Footer }
+     */
+
+    @Test
+    fun addFooter() {
+        givenCurrentList(Header())
+
+        SUT.insertCustomItem(Footer())
+
+        verifyOrder {
+            mockAdapter.spyOnCustomViewCreated(HEADER_LAYOUT_ID)
+            mockAdapter.spyOnCustomViewCreated(FOOTER_LAYOUT_ID)
+        }
+    }
+
+    /**
      * Give: Current data is { Header, "a", "b", "c", Footer }
      * When: Submit empty data
      * Then: Sequence is { Header, Footer }

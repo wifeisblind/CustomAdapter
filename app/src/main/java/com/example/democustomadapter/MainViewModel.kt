@@ -23,7 +23,7 @@ class MainViewModel : ViewModel() {
 
     init {
         itemList.value = List(15) { index -> ItemData.create(index) }
-        horizontalList.value = List(10) {index -> HorizontalData.create(index) }
+//        horizontalList.value = List(10) {index -> HorizontalData.create(index) }
     }
 
 
@@ -35,9 +35,9 @@ class MainViewModel : ViewModel() {
 
     fun loadMore() = viewModelScope.launch {
         if (hasMore.value == true) {
-            hasMore.value = false
             delay(1_000)
             itemList.value = List(20) { index -> ItemData.create(index) }
+            hasMore.value = false
         }
     }
 

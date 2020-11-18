@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.democustomadapter.customviewadapter.EasyAdapter
 import com.example.democustomadapter.customviewadapter.EasyAdapter.CustomItemView
 import com.example.democustomadapter.customviewadapter.insertFooter
+import com.example.democustomadapter.customviewadapter.insertHeader
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_footer.view.*
 import kotlinx.android.synthetic.main.layout_horizontal_item.view.*
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity(), DemoAdapter.DemoHolderClickListener {
             }
         })
 
-        demoAdapter.insertCustomView(HorizontalRecyclerViewHolder(horizontalAdapter))
+        demoAdapter.insertHeader(R.layout.layout_headeer)
 
         viewModel.getHasMore().observe(this) { hasMore ->
             demoAdapter.insertFooter(R.layout.layout_footer) {

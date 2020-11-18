@@ -1,5 +1,6 @@
 package com.example.democustomadapter.customviewadapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ class EasyAdapter<T, VH : EasyViewHolder>(
 ) : ListAdapter<Any, RecyclerView.ViewHolder>(delegate.diffCallback), OnSubmitListListener {
 
     override fun commitList(list: MutableList<Any>) {
+        Log.d("EasyAdapter", list.toString())
         submitList(list)
     }
 
