@@ -1,6 +1,6 @@
-package com.example.democustomadapter.customviewadapter
+package com.example.democustomadapter.easyadapter
 
-import com.example.democustomadapter.customviewadapter.EasyAdapter.CustomItem
+import com.example.democustomadapter.easyadapter.EasyAdapter.CustomItem
 
 
 @Suppress("UNCHECKED_CAST")

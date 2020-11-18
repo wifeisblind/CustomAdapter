@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.democustomadapter.customviewadapter.EasyAdapter
-import com.example.democustomadapter.customviewadapter.EasyAdapter.CustomItemView
-import com.example.democustomadapter.customviewadapter.insertFooter
-import com.example.democustomadapter.customviewadapter.insertHeader
+import com.example.democustomadapter.easyadapter.EasyAdapter
+import com.example.democustomadapter.easyadapter.EasyAdapter.CustomItemView
+import com.example.democustomadapter.easyadapter.insertFooter
+import com.example.democustomadapter.easyadapter.insertHeader
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_footer.view.*
 import kotlinx.android.synthetic.main.layout_horizontal_item.view.*

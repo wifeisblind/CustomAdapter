@@ -9,8 +9,8 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.democustomadapter.DemoAdapter.DemoHolder
-import com.example.democustomadapter.customviewadapter.EasyAdapterDelegate
-import com.example.democustomadapter.customviewadapter.EasyViewHolder
+import com.example.democustomadapter.easyadapter.EasyAdapterDelegate
+import com.example.democustomadapter.easyadapter.EasyViewHolder
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.layout_item.*
 

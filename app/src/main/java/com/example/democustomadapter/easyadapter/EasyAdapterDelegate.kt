@@ -1,4 +1,4 @@
-package com.example.democustomadapter.customviewadapter
+package com.example.democustomadapter.easyadapter
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.democustomadapter.customviewadapter.EasyAdapter.Companion.NO_TYPE
-import com.example.democustomadapter.customviewadapter.EasyAdapter.CustomItemView
+import com.example.democustomadapter.easyadapter.EasyAdapter.Companion.NO_TYPE
+import com.example.democustomadapter.easyadapter.EasyAdapter.CustomItemView
 
 abstract class EasyAdapterDelegate <T, VH : EasyViewHolder> {
 

@@ -1,4 +1,4 @@
-package com.example.democustomadapter.customviewadapter
+package com.example.democustomadapter.easyadapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

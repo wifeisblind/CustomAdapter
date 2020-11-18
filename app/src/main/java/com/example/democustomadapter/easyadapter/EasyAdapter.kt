@@ -1,4 +1,4 @@
-package com.example.democustomadapter.customviewadapter
+package com.example.democustomadapter.easyadapter
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.democustomadapter.customviewadapter.EasyAdapterHelper.Companion.NORMAL_TYPE
+import com.example.democustomadapter.easyadapter.EasyAdapterHelper.Companion.NORMAL_TYPE
 
 @Suppress("UNCHECKED_CAST")
 class EasyAdapter<T, VH : EasyViewHolder>(
@@ -14,7 +14,6 @@ class EasyAdapter<T, VH : EasyViewHolder>(
 ) : ListAdapter<Any, RecyclerView.ViewHolder>(delegate.diffCallback), OnSubmitListListener {
 
     override fun commitList(list: MutableList<Any>) {
-        Log.d("EasyAdapter", list.toString())
         submitList(list)
     }
 

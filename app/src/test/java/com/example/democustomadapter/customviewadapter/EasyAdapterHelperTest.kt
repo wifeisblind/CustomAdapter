@@ -1,6 +1,8 @@
 package com.example.democustomadapter.customviewadapter
 
-import com.example.democustomadapter.customviewadapter.EasyAdapter.CustomItem
+import com.example.democustomadapter.easyadapter.EasyAdapter.CustomItem
+import com.example.democustomadapter.easyadapter.EasyAdapterHelper
+import com.example.democustomadapter.easyadapter.OnSubmitListListener
 import io.mockk.MockKAnnotations
 import io.mockk.spyk
 import io.mockk.verify
