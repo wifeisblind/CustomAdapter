@@ -2,7 +2,6 @@ package com.example.democustomadapter
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
@@ -11,7 +10,7 @@ import com.example.democustomadapter.customviewadapter.insertFooter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_footer.view.*
 
-class MainActivity : AppCompatActivity(), DemoAdapter.OnAddFavoriteClickListener {
+class MainActivity : AppCompatActivity(), DemoAdapter.DemoHolderClickListener {
 
     private val demoAdapter: DemoAdapter = DemoAdapter(this)
 
@@ -54,5 +53,9 @@ class MainActivity : AppCompatActivity(), DemoAdapter.OnAddFavoriteClickListener
 
     override fun onAddFavorite(position: Int) {
         viewModel.addFavorite(position)
+    }
+
+    override fun onDelete(position: Int) {
+        viewModel.delete(position)
     }
 }

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.democustomadapter.customviewadapter.EasyAdapterHelper.Companion.NORMAL_TYPE
 
 @Suppress("UNCHECKED_CAST")
-class EasyAdapter<T, VH : RecyclerView.ViewHolder>(
+class EasyAdapter<T, VH : EasyViewHolder>(
     private val delegate: EasyAdapterDelegate<T, VH>
 ) : ListAdapter<Any, RecyclerView.ViewHolder>(delegate.diffCallback), OnSubmitListListener {
 
@@ -32,7 +32,9 @@ class EasyAdapter<T, VH : RecyclerView.ViewHolder>(
             viewType < 0 -> {
                 CustomViewHolder(LayoutInflater.from(parent.context).inflate(viewType.unaryMinus(), parent, false))
             }
-            else -> delegate.onCreateViewHolder(parent, viewType)
+            else -> delegate.onCreateViewHolder(parent, viewType).apply {
+                helper = this@EasyAdapter.helper
+            }
         }
     }
 

@@ -21,8 +21,7 @@ class EasyAdapterHelper<T>(
         return if (currentList[position] is CustomItem) {
             (0 to currentList[position])
         } else {
-            val offset = customItems.map { it.getInsertPosition(currentList.size) }.filter { it < position }.size
-            ((position - offset) to currentList[position])
+            (getNormalPos(position) to currentList[position])
         }
     }
 
@@ -51,6 +50,11 @@ class EasyAdapterHelper<T>(
             currentList.add(insertPos, c)
         }
         adapter.commitList(currentList.toMutableList())
+    }
+
+    fun getNormalPos(position: Int): Int {
+        val offset = customItems.map { it.getInsertPosition(currentList.size) }.filter { it < position }.size
+        return position - offset
     }
 
     companion object {

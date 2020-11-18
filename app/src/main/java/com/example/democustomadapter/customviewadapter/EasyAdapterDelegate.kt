@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.democustomadapter.customviewadapter.EasyAdapter.Companion.NO_TYPE
 import com.example.democustomadapter.customviewadapter.EasyAdapter.CustomItemView
 
-abstract class EasyAdapterDelegate <T, VH : RecyclerView.ViewHolder> {
+abstract class EasyAdapterDelegate <T, VH : EasyViewHolder> {
 
     abstract fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
 

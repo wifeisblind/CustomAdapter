@@ -8,18 +8,20 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.democustomadapter.DemoAdapter.TestViewHolder
+import com.example.democustomadapter.DemoAdapter.DemoHolder
 import com.example.democustomadapter.customviewadapter.EasyAdapterDelegate
+import com.example.democustomadapter.customviewadapter.EasyViewHolder
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.layout_item.*
 
-class DemoAdapter(private val listener: OnAddFavoriteClickListener) : EasyAdapterDelegate<ItemData, TestViewHolder>() {
+class DemoAdapter(private val listener: DemoHolderClickListener) : EasyAdapterDelegate<ItemData, DemoHolder>() {
 
-    interface OnAddFavoriteClickListener {
+    interface DemoHolderClickListener {
         fun onAddFavorite(position: Int)
+        fun onDelete(position: Int)
     }
 
-    override fun onBindViewHolder(holder: TestViewHolder, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(holder: DemoHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) {
             super.onBindViewHolder(holder, position, payloads)
         } else {
@@ -27,12 +29,12 @@ class DemoAdapter(private val listener: OnAddFavoriteClickListener) : EasyAdapte
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
-        return TestViewHolder(parent, listener)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DemoHolder {
+        return DemoHolder(parent, listener)
     }
 
-    override fun onBindViewHolder(holder: TestViewHolder, position: Int) {
-        holder.bind(getItem(position), position)
+    override fun onBindViewHolder(holder: DemoHolder, position: Int) {
+        holder.bind(getItem(position))
         holder.itemView.setOnClickListener { Toast.makeText(holder.context, "position: $position", LENGTH_SHORT).show() }
     }
 
@@ -52,21 +54,23 @@ class DemoAdapter(private val listener: OnAddFavoriteClickListener) : EasyAdapte
         }
     }
 
-    class TestViewHolder(
+    class DemoHolder(
         parent: ViewGroup,
-        private val listener: OnAddFavoriteClickListener
-    ) : RecyclerView.ViewHolder(
+        private val listener: DemoHolderClickListener
+    ) : EasyViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.layout_item, parent, false)
-    ), LayoutContainer {
-
-        override val containerView: View = itemView
+    ) {
 
         val context: Context = itemView.context
 
-        fun bind(data: ItemData, position: Int) = with(data) {
+        fun bind(data: ItemData) = with(data) {
 
             imgFavorite.setOnClickListener {
-                listener.onAddFavorite(position)
+                listener.onAddFavorite(normalPosition)
+            }
+
+            imgDelete.setOnClickListener {
+                listener.onDelete(normalPosition)
             }
 
             tvTitle.text = title

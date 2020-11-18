@@ -29,11 +29,16 @@ class MainViewModel : ViewModel() {
     }
 
     fun loadMore() = viewModelScope.launch {
-        delay(1_000)
-
         if (hasMore.value == true) {
+            delay(1_000)
             itemList.value = List(20) { index -> ItemData.create(index) }
             hasMore.value = false
+        }
+    }
+
+    fun delete(position: Int) {
+        itemList.value = itemList.value?.toMutableList()?.apply {
+            removeAt(position)
         }
     }
 }
