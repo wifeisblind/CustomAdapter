@@ -19,6 +19,14 @@ class DemoAdapter(private val listener: OnAddFavoriteClickListener) : EasyAdapte
         fun onAddFavorite(position: Int)
     }
 
+    override fun onBindViewHolder(holder: TestViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            holder.bindFavorite(payloads[0] as Boolean)
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
         return TestViewHolder(parent, listener)
     }
@@ -29,11 +37,19 @@ class DemoAdapter(private val listener: OnAddFavoriteClickListener) : EasyAdapte
     }
 
     override fun areItemsTheSame(oldItem: ItemData, newItem: ItemData): Boolean {
-        return oldItem == newItem
+        return oldItem.title == newItem.title
     }
 
     override fun areContentsTheSame(oldItem: ItemData, newItem: ItemData): Boolean {
         return oldItem == newItem
+    }
+
+    override fun getChangePayload(oldItem: ItemData, newItem: ItemData): Any? {
+        return if (oldItem == newItem.copy(isFavorite = newItem.isFavorite.not())) {
+            newItem.isFavorite
+        } else {
+            null
+        }
     }
 
     class TestViewHolder(
@@ -58,6 +74,10 @@ class DemoAdapter(private val listener: OnAddFavoriteClickListener) : EasyAdapte
                     .load(imgCommodityUrl)
                     .into(imgCommodity)
             tvPrice.text = "$$price"
+            bindFavorite(isFavorite)
+        }
+
+        fun bindFavorite(isFavorite: Boolean) {
             val img = if (isFavorite) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_outline_favorite_border_24
             imgFavorite.setImageResource(img)
         }

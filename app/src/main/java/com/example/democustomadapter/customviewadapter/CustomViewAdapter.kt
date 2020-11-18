@@ -36,6 +36,13 @@ class CustomViewAdapter<T, VH : RecyclerView.ViewHolder>(
         }
     }
 
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
+        when(holder) {
+            is CustomViewHolder -> super.onBindViewHolder(holder, position, payloads)
+            else -> delegate.onBindViewHolder(holder as VH, position, payloads)
+        }
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val (normalPos, item) = helper.bindViewHolder(position)
         when(holder) {

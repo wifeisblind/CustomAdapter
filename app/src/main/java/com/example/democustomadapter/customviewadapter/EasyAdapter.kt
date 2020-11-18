@@ -18,13 +18,17 @@ abstract class EasyAdapter <T, VH : RecyclerView.ViewHolder> {
      */
     open fun getItemViewType(position: Int): Int = NO_TYPE
 
+    open fun onBindViewHolder(holder: VH, position: Int, payloads: MutableList<Any>) {
+        realAdapter.onBindViewHolder(holder, position)
+    }
+
     abstract fun onBindViewHolder(holder: VH, position: Int)
 
     abstract fun areItemsTheSame(oldItem: T, newItem: T): Boolean
 
     abstract fun areContentsTheSame(oldItem: T, newItem: T): Boolean
 
-    open fun getChangePayload(oldItem: T, newItem: T): T? {
+    open fun getChangePayload(oldItem: T, newItem: T): Any? {
         return null
     }
 
