@@ -1,86 +1,77 @@
 package com.example.democustomadapter.customviewadapter
 
-import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.democustomadapter.customviewadapter.CustomViewAdapter.Companion.NO_TYPE
-import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItemView
+import com.example.democustomadapter.customviewadapter.EasyAdapterHelper.Companion.NORMAL_TYPE
 
-abstract class EasyAdapter <T, VH : RecyclerView.ViewHolder> {
+@Suppress("UNCHECKED_CAST")
+class EasyAdapter<T, VH : RecyclerView.ViewHolder>(
+    private val delegate: EasyAdapterDelegate<T, VH>
+) : ListAdapter<Any, RecyclerView.ViewHolder>(delegate.diffCallback), OnSubmitListListener {
 
-    abstract fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
-
-    /**
-     * Negative value is reserved, please using value larger than 0
-     */
-    open fun getItemViewType(position: Int): Int = NO_TYPE
-
-    open fun onBindViewHolder(holder: VH, position: Int, payloads: MutableList<Any>) {
-        realAdapter.onBindViewHolder(holder, position)
+    override fun commitList(list: MutableList<Any>) {
+        submitList(list)
     }
 
-    abstract fun onBindViewHolder(holder: VH, position: Int)
+    private val helper: EasyAdapterHelper<T> = EasyAdapterHelper(this)
 
-    abstract fun areItemsTheSame(oldItem: T, newItem: T): Boolean
-
-    abstract fun areContentsTheSame(oldItem: T, newItem: T): Boolean
-
-    open fun getChangePayload(oldItem: T, newItem: T): Any? {
-        return null
+    override fun getItemViewType(position: Int): Int {
+        return when (val type = helper.getItemViewType(position)) {
+            NORMAL_TYPE -> delegate.getItemViewType(position)
+            else -> type.unaryMinus()
+        }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    val diffCallback: DiffUtil.ItemCallback<Any> = object : DiffUtil.ItemCallback<Any>() {
-        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is CustomItemView || newItem is CustomItemView) {
-                oldItem === newItem
-            } else {
-                this@EasyAdapter.areItemsTheSame(oldItem as T, newItem as T)
+    fun isCustomType(position: Int): Boolean = getItemViewType(position) < 0
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when {
+            viewType < 0 -> {
+                CustomViewHolder(LayoutInflater.from(parent.context).inflate(viewType.unaryMinus(), parent, false))
             }
-        }
-
-        @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return if (oldItem is CustomItemView || newItem is CustomItemView) {
-                oldItem === newItem
-            } else {
-                this@EasyAdapter.areContentsTheSame(oldItem as T, newItem as T)
-            }
-        }
-
-        override fun getChangePayload(oldItem: Any, newItem: Any): Any? {
-            return getChangePayload(oldItem as T, newItem as T)
+            else -> delegate.onCreateViewHolder(parent, viewType)
         }
     }
 
-    private val realAdapter: CustomViewAdapter<T, VH> = CustomViewAdapter(this)
-
-    open val setting: RecyclerView.() -> Unit = {
-        layoutManager = LinearLayoutManager(context)
-        adapter = realAdapter
-    }
-
-    open val twoSpanSetting: RecyclerView.() -> Unit = {
-        layoutManager = GridLayoutManager(context, 2).apply {
-            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return if ( realAdapter.isCustomType(position)) 1 else 2
-                }
-            }
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
+        when(holder) {
+            is CustomViewHolder -> super.onBindViewHolder(holder, position, payloads)
+            else -> delegate.onBindViewHolder(holder as VH, position, payloads)
         }
-        adapter = realAdapter
     }
 
-    protected fun getItem(position: Int): T = realAdapter.getNormalItem(position)
-
-    fun submitList(list: List<T>) {
-        realAdapter.submitNormalList(list)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val (normalPos, item) = helper.bindViewHolder(position)
+        when(holder) {
+            is CustomViewHolder -> (item as CustomItemView).onViewCreated(holder.itemView)
+            else -> delegate.onBindViewHolder(holder as VH, normalPos)
+        }
     }
 
-    fun insertCustomView(customView: CustomItemView) {
-        realAdapter.insertCustomView(customView)
+    fun getNormalItem(position: Int): T = helper.getNormalItem(position)
+
+    fun insertCustomView(customView: CustomItemView) = helper.insertCustomItem(customView)
+
+    fun submitNormalList(list: List<T>) {
+        helper.submitNormalList(list)
+    }
+
+    private class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    interface CustomItem {
+        val layoutId: Int
+        fun getInsertPosition(itemCount: Int): Int
+    }
+
+    abstract class CustomItemView(override val layoutId: Int) : CustomItem {
+
+        abstract fun onViewCreated(view: View)
+    }
+
+    companion object {
+        const val NO_TYPE = 0
     }
 }

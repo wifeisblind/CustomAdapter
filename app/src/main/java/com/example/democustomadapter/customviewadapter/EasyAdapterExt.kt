@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 class Footer(
     @LayoutRes private val layoutRes: Int,
     private val onBindView: View.() -> Unit
-) : CustomViewAdapter.CustomItemView(layoutRes) {
+) : EasyAdapter.CustomItemView(layoutRes) {
 
     override fun onViewCreated(view: View) {
         onBindView(view)
@@ -20,7 +20,7 @@ class Footer(
 class Header(
     @LayoutRes private val layoutRes: Int,
     private val onBindView: View.() -> Unit
-) : CustomViewAdapter.CustomItemView(layoutRes) {
+) : EasyAdapter.CustomItemView(layoutRes) {
 
     override fun onViewCreated(view: View) {
         onBindView(view)
@@ -30,14 +30,14 @@ class Header(
 }
 
 
-fun EasyAdapter<*, out RecyclerView.ViewHolder>.insertFooter(
+fun EasyAdapterDelegate<*, out RecyclerView.ViewHolder>.insertFooter(
     @LayoutRes layoutRes: Int,
     onBindView: View.() -> Unit = {}
 ) {
     insertCustomView(Footer(layoutRes, onBindView))
 }
 
-fun EasyAdapter<*, out RecyclerView.ViewHolder>.insertHeader(
+fun EasyAdapterDelegate<*, out RecyclerView.ViewHolder>.insertHeader(
     @LayoutRes layoutRes: Int,
     onBindView: View.() -> Unit = {}
 ) {

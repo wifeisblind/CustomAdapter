@@ -1,6 +1,6 @@
 package com.example.democustomadapter.customviewadapter
 
-import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItem
+import com.example.democustomadapter.customviewadapter.EasyAdapter.CustomItem
 import io.mockk.MockKAnnotations
 import io.mockk.spyk
 import io.mockk.verify
@@ -9,9 +9,9 @@ import org.junit.Before
 
 import org.junit.Test
 
-class CustomViewAdapterHelperTest {
+class EasyAdapterHelperTest {
 
-    lateinit var SUT: CustomViewAdapterHelper<String>
+    lateinit var SUT: EasyAdapterHelper<String>
 
     lateinit var mockAdapter: MockAdapter<String>
 
@@ -24,7 +24,7 @@ class CustomViewAdapterHelperTest {
         mockAdapter = spyk(MockAdapter())
         initialList = mutableListOf()
         customItem = mutableListOf()
-        SUT = CustomViewAdapterHelper(mockAdapter, initialList, customItem)
+        SUT = EasyAdapterHelper(mockAdapter, initialList, customItem)
         mockAdapter.helper = SUT
         MockKAnnotations.init(this)
     }
@@ -171,9 +171,9 @@ class CustomViewAdapterHelperTest {
     }
 
     @Suppress("UNCHECKED_CAST")
-    class MockAdapter<T> : CustomViewAdapterHelperDelegate {
+    class MockAdapter<T> : OnSubmitListListener {
 
-        lateinit var helper: CustomViewAdapterHelper<T>
+        lateinit var helper: EasyAdapterHelper<T>
 
         override fun commitList(list: MutableList<Any>) {
             println(list)

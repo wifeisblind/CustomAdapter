@@ -1,11 +1,11 @@
 package com.example.democustomadapter.customviewadapter
 
-import com.example.democustomadapter.customviewadapter.CustomViewAdapter.CustomItem
+import com.example.democustomadapter.customviewadapter.EasyAdapter.CustomItem
 
 
 @Suppress("UNCHECKED_CAST")
-class CustomViewAdapterHelper<T>(
-        private val adapter: CustomViewAdapterHelperDelegate,
+class EasyAdapterHelper<T>(
+        private val adapter: OnSubmitListListener,
         private val currentList: MutableList<Any> = mutableListOf(),
         private val customItems: MutableList<CustomItem> = mutableListOf()
 ) {

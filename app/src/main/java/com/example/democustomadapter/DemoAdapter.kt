@@ -9,11 +9,11 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.democustomadapter.DemoAdapter.TestViewHolder
-import com.example.democustomadapter.customviewadapter.EasyAdapter
+import com.example.democustomadapter.customviewadapter.EasyAdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.layout_item.*
 
-class DemoAdapter(private val listener: OnAddFavoriteClickListener) : EasyAdapter<ItemData, TestViewHolder>() {
+class DemoAdapter(private val listener: OnAddFavoriteClickListener) : EasyAdapterDelegate<ItemData, TestViewHolder>() {
 
     interface OnAddFavoriteClickListener {
         fun onAddFavorite(position: Int)

@@ -1,6 +1,6 @@
 package com.example.democustomadapter.customviewadapter
 
 
-interface CustomViewAdapterHelperDelegate {
+interface OnSubmitListListener {
     fun commitList(list: MutableList<Any>)
 }
