@@ -67,7 +67,7 @@ abstract class EasyAdapterDelegate <T, VH : EasyViewHolder> {
         layoutManager = GridLayoutManager(context, 2).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if ( realAdapter.isCustomType(position)) 1 else 2
+                    return if ( realAdapter.isCustomType(position)) 2 else 1
                 }
             }
         }
@@ -75,6 +75,8 @@ abstract class EasyAdapterDelegate <T, VH : EasyViewHolder> {
     }
 
     protected fun getItem(position: Int): T = realAdapter.getNormalItem(position)
+
+    val itemCount: Int get() = realAdapter.itemCount
 
     fun submitList(list: List<T>) {
         realAdapter.submitNormalList(list)

@@ -1,6 +1,5 @@
 package com.example.democustomadapter.easyadapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import com.example.democustomadapter.easyadapter.EasyAdapterHelper.Companion.NOR
 
 @Suppress("UNCHECKED_CAST")
 class EasyAdapter<T, VH : EasyViewHolder>(
-    private val delegate: EasyAdapterDelegate<T, VH>
+        private val delegate: EasyAdapterDelegate<T, VH>
 ) : ListAdapter<Any, RecyclerView.ViewHolder>(delegate.diffCallback), OnSubmitListListener {
 
     override fun commitList(list: MutableList<Any>) {
