@@ -48,7 +48,7 @@ class EasyAdapter<T, VH : EasyViewHolder>(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val (normalPos, item) = helper.bindViewHolder(position)
         when(holder) {
-            is CustomViewHolder -> (item as CustomItemView).onViewCreated(holder.itemView)
+            is CustomViewHolder -> (item as CustomItemView).onBindView(holder.itemView)
             else -> delegate.onBindViewHolder(holder as VH, normalPos)
         }
     }
@@ -70,7 +70,7 @@ class EasyAdapter<T, VH : EasyViewHolder>(
 
     abstract class CustomItemView(override val layoutId: Int) : CustomItem {
 
-        abstract fun onViewCreated(view: View)
+        abstract fun onBindView(view: View)
     }
 
     companion object {

@@ -33,7 +33,11 @@ class EasyAdapterHelper<T>(
         val existedItem = customItems.find { it.getInsertPosition(itemCount + 1) == customItem.getInsertPosition(itemCount + 1) }
         if (existedItem == null) {
             customItems.add(customItem)
-            currentList.add(customItem.getInsertPosition(itemCount + 1), customItem)
+            val pos = customItem.getInsertPosition(itemCount + 1)
+            when {
+                pos >= itemCount -> currentList.add(customItem)
+                else -> currentList.add(pos, customItem)
+            }
         } else {
             val index = customItems.indexOf(existedItem)
             customItems[index] = customItem

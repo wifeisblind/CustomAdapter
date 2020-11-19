@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.democustomadapter.easyadapter.EasyAdapter
 import com.example.democustomadapter.easyadapter.EasyAdapter.CustomItemView
+import com.example.democustomadapter.easyadapter.LoadMoreScrollListener
 import com.example.democustomadapter.easyadapter.insertFooter
 import com.example.democustomadapter.easyadapter.insertHeader
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,7 +23,7 @@ import kotlinx.android.synthetic.main.layout_footer.view.*
 import kotlinx.android.synthetic.main.layout_horizontal_item.view.*
 import kotlinx.android.synthetic.main.layout_horizontal_scroll.view.*
 
-class MainActivity : AppCompatActivity(), DemoAdapter.DemoHolderClickListener {
+class MainActivity : AppCompatActivity(), DemoAdapter.DemoHolderClickListener, LoadMoreScrollListener.OnLoadMoreListener {
 
     private val demoAdapter: DemoAdapter = DemoAdapter(this)
 
@@ -35,20 +36,11 @@ class MainActivity : AppCompatActivity(), DemoAdapter.DemoHolderClickListener {
         setContentView(R.layout.activity_main)
 
         rv.apply(demoAdapter.setting)
-        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollHorizontally(1) ) {
-                    viewModel.loadMore()
-                }
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-            }
-        })
+        rv.addOnScrollListener(LoadMoreScrollListener(this))
 
         demoAdapter.insertHeader(R.layout.layout_headeer)
+
+        demoAdapter.insertCustomView(HorizontalRecyclerViewHolder(horizontalAdapter))
 
         viewModel.getHasMore().observe(this) { hasMore ->
             demoAdapter.insertFooter(R.layout.layout_footer) {
@@ -71,6 +63,10 @@ class MainActivity : AppCompatActivity(), DemoAdapter.DemoHolderClickListener {
         }
     }
 
+    override fun onLoadMore() {
+        viewModel.loadMore()
+    }
+
     override fun onAddFavorite(position: Int) {
         viewModel.addFavorite(position)
     }
@@ -85,7 +81,7 @@ class MainActivity : AppCompatActivity(), DemoAdapter.DemoHolderClickListener {
 
         override fun getInsertPosition(itemCount: Int): Int = 3
 
-        override fun onViewCreated(view: View) {
+        override fun onBindView(view: View) {
             with(view) {
                 rvHorizontal.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
                 rvHorizontal.adapter = adapter

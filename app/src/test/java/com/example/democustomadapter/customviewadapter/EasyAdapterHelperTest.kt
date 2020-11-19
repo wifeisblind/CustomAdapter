@@ -175,10 +175,23 @@ class EasyAdapterHelperTest {
         }
     }
 
+    @Test
+    fun testInsertMiddle() {
+        givenCurrentList(Header())
+
+        SUT.insertCustomItem(Middle())
+
+        verifyOrder {
+            mockAdapter.spyOnCustomViewCreated(HEADER_LAYOUT_ID)
+            mockAdapter.spyOnCustomViewCreated(MIDDLE_LAYOUT_ID)
+        }
+    }
+
     companion object {
         private const val FOOTER_LAYOUT_ID = 123
         private const val HEADER_LAYOUT_ID = 789
         private const val FOOTER_X_LAYOUT_ID = 996
+        private const val MIDDLE_LAYOUT_ID = 223
     }
 
     private fun givenCurrentList(vararg currentList: Any) {
@@ -231,5 +244,11 @@ class EasyAdapterHelperTest {
         override val layoutId: Int get() = HEADER_LAYOUT_ID
 
         override fun getInsertPosition(itemCount: Int): Int = 0
+    }
+
+    class Middle : CustomItem {
+        override val layoutId: Int = MIDDLE_LAYOUT_ID
+
+        override fun getInsertPosition(itemCount: Int): Int = 3
     }
 }

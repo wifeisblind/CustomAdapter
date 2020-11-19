@@ -10,7 +10,7 @@ class Footer(
         private val onBindView: View.() -> Unit
 ) : EasyAdapter.CustomItemView(layoutRes) {
 
-    override fun onViewCreated(view: View) {
+    override fun onBindView(view: View) {
         onBindView(view)
     }
 
@@ -22,7 +22,7 @@ class Header(
         private val onBindView: View.() -> Unit
 ) : EasyAdapter.CustomItemView(layoutRes) {
 
-    override fun onViewCreated(view: View) {
+    override fun onBindView(view: View) {
         onBindView(view)
     }
 

@@ -59,7 +59,9 @@ abstract class EasyAdapterDelegate <T, VH : EasyViewHolder> {
     private val realAdapter: EasyAdapter<T, VH> = EasyAdapter(this)
 
     open val setting: RecyclerView.() -> Unit = {
-        layoutManager = LinearLayoutManager(context)
+        layoutManager = LinearLayoutManager(context).apply {
+            this.findFirstCompletelyVisibleItemPosition()
+        }
         adapter = realAdapter
     }
 
