@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), DemoAdapter.DemoHolderClickListener, L
 
         override fun getInsertPosition(itemCount: Int): Int = 3
 
-        override fun onBindView(view: View) {
+        override fun onViewCreated(view: View) {
             with(view) {
                 rvHorizontal.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
                 rvHorizontal.adapter = adapter

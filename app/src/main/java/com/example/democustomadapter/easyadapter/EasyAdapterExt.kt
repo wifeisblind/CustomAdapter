@@ -2,7 +2,6 @@ package com.example.democustomadapter.easyadapter
 
 import android.view.View
 import androidx.annotation.LayoutRes
-import androidx.recyclerview.widget.RecyclerView
 
 
 class Footer(
@@ -10,7 +9,7 @@ class Footer(
         private val onBindView: View.() -> Unit
 ) : EasyAdapter.CustomItemView(layoutRes) {
 
-    override fun onBindView(view: View) {
+    override fun onViewCreated(view: View) {
         onBindView(view)
     }
 
@@ -22,7 +21,7 @@ class Header(
         private val onBindView: View.() -> Unit
 ) : EasyAdapter.CustomItemView(layoutRes) {
 
-    override fun onBindView(view: View) {
+    override fun onViewCreated(view: View) {
         onBindView(view)
     }
 
